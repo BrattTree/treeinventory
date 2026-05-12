@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><title>Primary Logo</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<link rel="stylesheet" href="preview.css">
+<style>
+.row { display:flex; gap:0; align-items:stretch; height:300px; }
+.cell { flex:1; display:flex; align-items:center; justify-content:center; border-right:1px solid var(--border); }
+.cell:last-child { border-right:none; }
+.cell.dark { background: var(--bt-bark); }
+.cell.cream { background: var(--bt-cream); }
+.cell.white { background:#fff; }
+img { max-height:220px; max-width:90%; object-fit:contain; }
+.caption { position:absolute; bottom:8px; left:0; right:0; text-align:center; font-family:var(--font-mono); font-size:10px; color:var(--fg-3); letter-spacing:.1em; text-transform:uppercase; }
+.cell { position:relative; }
+.cell.dark .caption { color: rgba(255,248,236,.6); }
+</style></head>
+<body><div class="card" style="padding:0">
+  <div class="row">
+    <div class="cell cream"><img src="../assets/logo-color.png" alt="Primary signature"><div class="caption">on cream</div></div>
+    <div class="cell white"><img src="../assets/logo-color.png" alt="On white"><div class="caption">on white</div></div>
+    <div class="cell dark"><img src="../assets/logo-color.png" alt="On bark"><div class="caption">on bark</div></div>
+  </div>
+</div></body></html>

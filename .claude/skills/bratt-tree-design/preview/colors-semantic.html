@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><title>Semantic Colors</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<link rel="stylesheet" href="preview.css">
+<style>
+.rows { display:grid; gap:8px; }
+.r { display:flex; align-items:center; gap:14px; padding:8px 12px; background:#fff; border:1px solid var(--border); border-radius:10px; }
+.dot { width:28px; height:28px; border-radius:8px; border:2px solid var(--bt-ink); flex:none; }
+.k { font-weight:800; font-size:13px; letter-spacing:.04em; text-transform:uppercase; width:130px; }
+.v { font-family: var(--font-mono); font-size:11px; color:var(--fg-2); flex:1; }
+.role { font-size:12px; color:var(--fg-3); }
+</style></head>
+<body><div class="card">
+  <div class="rows">
+    <div class="r"><div class="dot" style="background:var(--accent)"></div><div class="k">--accent</div><div class="v">#EB4C1B</div><div class="role">CTAs, links, primary accent</div></div>
+    <div class="r"><div class="dot" style="background:var(--success)"></div><div class="k">--success</div><div class="v">#448629</div><div class="role">Confirmations, "done"</div></div>
+    <div class="r"><div class="dot" style="background:var(--info)"></div><div class="k">--info</div><div class="v">#188CB2</div><div class="role">Informational badges only</div></div>
+    <div class="r"><div class="dot" style="background:var(--warning)"></div><div class="k">--warning</div><div class="v">#D89A12</div><div class="role">Caution, scheduling notices</div></div>
+    <div class="r"><div class="dot" style="background:var(--danger)"></div><div class="k">--danger</div><div class="v">#B83410</div><div class="role">Errors, destructive actions</div></div>
+  </div>
+</div></body></html>

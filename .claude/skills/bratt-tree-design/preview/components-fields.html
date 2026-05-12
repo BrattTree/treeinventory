@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><title>Form Fields</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<link rel="stylesheet" href="preview.css">
+<style>
+.row { display:flex; gap:14px; align-items:flex-end; }
+.field { display:flex; flex-direction:column; gap:6px; flex:1; }
+label.lbl {
+  font-family: "Nunito", sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--fg-2);
+  letter-spacing: 0;
+  text-transform: none;
+}
+.input {
+  font-family: "Nunito", sans-serif; font-size: 15px; color: var(--bt-ink);
+  background: #fff; border: 2px solid var(--bt-ink); border-radius: 14px;
+  padding: 12px 14px; outline: none;
+  transition: box-shadow var(--t-fast);
+}
+.input:focus { box-shadow: 0 0 0 3px var(--bt-lime); }
+.select { appearance: none; background: #fff url("data:image/svg+xml,%3Csvg width='12' height='8' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2326190E' stroke-width='2' fill='none'/%3E%3C/svg%3E") no-repeat right 14px center; padding-right:36px;}
+.check {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-family: "Nunito", sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  color: var(--fg-1);
+}
+.check input { width:18px; height:18px; accent-color: var(--bt-orange); }
+</style></head>
+<body><div class="card">
+  <div class="row">
+    <div class="field"><label class="lbl">Name</label><input class="input" value="Jordan Walker"></div>
+    <div class="field"><label class="lbl">Service</label><select class="input select"><option>Tree trimming</option><option>Tree removal</option></select></div>
+  </div>
+  <div class="row" style="margin-top:14px; gap:18px;">
+    <label class="check"><input type="checkbox" checked> Text me with arrival updates</label>
+    <label class="check"><input type="checkbox"> I'm a repeat customer</label>
+  </div>
+</div></body></html>

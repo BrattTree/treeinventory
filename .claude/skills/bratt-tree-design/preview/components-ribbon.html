@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><title>Trust Ribbon</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<link rel="stylesheet" href="preview.css">
+<style>
+body { background: var(--bt-cream); }
+.card { padding: 0; }
+
+/* Yellow tagline-and-bullets block (mimics hero ref) */
+.lime-block {
+  background: linear-gradient(180deg, #FFFCE2 0%, var(--bt-lime) 100%);
+  border-radius: 18px;
+  padding: 20px 22px;
+  position: relative;
+  overflow: hidden;
+}
+.eyebrow-italic {
+  font-family: "Nunito", sans-serif;
+  font-weight: 700;
+  font-style: italic;
+  font-size: 13px;
+  color: var(--bt-orange);
+  letter-spacing: .01em;
+  margin: 0 0 6px;
+}
+.headline {
+  font-family: "Nunito", sans-serif;
+  font-weight: 900;
+  font-size: 22px;
+  line-height: 1.1;
+  color: #1A0E05;
+  text-transform: uppercase;
+  margin: 0 0 12px;
+  max-width: 92%;
+}
+.checks { display: flex; flex-direction: column; gap: 7px; }
+.check-row { display: flex; align-items: center; gap: 10px; font-family: "Nunito", sans-serif; font-size: 13.5px; color: #1A0E05; }
+.check-icon {
+  width: 22px; height: 22px; border-radius: 50%;
+  background: #1A0E05; color: var(--bt-lime);
+  display: flex; align-items: center; justify-content: center;
+  flex: none; box-shadow: 0 0 0 2px var(--bt-lime);
+}
+.check-icon svg { width: 11px; height: 11px; }
+
+/* Dark callout card (mimics ISA-Certified ref) */
+.dark-callout {
+  margin-top: 14px;
+  background: var(--bt-bark);
+  border-radius: 18px;
+  padding: 22px 26px 22px 92px;
+  color: var(--bt-lime);
+  font-family: "Nunito", sans-serif;
+  font-weight: 900;
+  font-size: 19px;
+  line-height: 1.15;
+  position: relative;
+  overflow: hidden;
+}
+.dark-callout .tree {
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 72px;
+  display: flex; align-items: center; justify-content: center;
+}
+.dark-callout .tree svg { width: 70px; height: 100%; }
+</style></head>
+<body><div class="card">
+  <div class="lime-block">
+    <p class="eyebrow-italic">Professional Tree Services for Healthier, Safer Landscapes</p>
+    <h3 class="headline">Certified Arborists. Clear Pricing. Guaranteed Satisfaction.</h3>
+    <div class="checks">
+      <div class="check-row"><span class="check-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> Family-owned and trusted since 1991</div>
+      <div class="check-row"><span class="check-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> Full-service tree trimming, removal, and cleanup</div>
+      <div class="check-row"><span class="check-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span> Fully licensed, insured, and ISA-Certified professionals</div>
+    </div>
+  </div>
+
+  <div class="dark-callout">
+    <div class="tree">
+      <svg viewBox="0 0 80 120" preserveAspectRatio="xMidYMid meet" fill="#8F8A1B" stroke="none" aria-hidden>
+        <path d="M40 4 L20 38 L30 38 L10 70 L26 70 L4 110 L36 110 L36 120 L44 120 L44 110 L76 110 L54 70 L70 70 L50 38 L60 38 Z"/>
+      </svg>
+    </div>
+    Your ISA-Certified<br/>Tree Specialists
+  </div>
+</div></body></html>

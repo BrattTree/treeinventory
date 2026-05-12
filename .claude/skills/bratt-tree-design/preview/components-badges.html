@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><title>Badges & Pills</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<link rel="stylesheet" href="preview.css">
+<style>
+.pill { display:inline-flex; align-items:center; gap:6px; font-family:var(--font-body); font-weight:800; font-size:12px; letter-spacing:.08em; text-transform:uppercase; padding:6px 12px; border-radius:999px; border:2px solid var(--bt-ink); }
+.row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+.tag { background: var(--bt-bone); }
+.tag-orange { background: var(--bt-orange); color:#fff; }
+.tag-green { background: var(--bt-green); }
+.tag-dark { background: var(--bt-bark); color: var(--bt-cream); }
+.tag-lime { background: var(--bt-lime); }
+.shield { display:inline-flex; align-items:center; gap:8px; padding:10px 16px; border-radius:32px; border:2px solid var(--bt-ink); background:#fff; font-weight:800; font-size:13px; text-transform:uppercase; letter-spacing:.06em; box-shadow: 0 3px 0 var(--bt-ink); }
+.dot { width:8px; height:8px; border-radius:50%; }
+</style></head>
+<body><div class="card">
+  <div class="row">
+    <span class="pill tag-orange">Most Popular</span>
+    <span class="pill tag-green">ISA Certified</span>
+    <span class="pill tag-lime">24/7 Emergency</span>
+    <span class="pill tag-dark">Insured</span>
+    <span class="pill tag"><span class="dot" style="background:var(--success)"></span> On schedule</span>
+  </div>
+  <div class="row" style="margin-top:14px">
+    <span class="shield">★ 4.9 · 612 reviews</span>
+    <span class="shield">⛑️ Fully Insured</span>
+  </div>
+</div></body></html>

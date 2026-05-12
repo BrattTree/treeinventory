@@ -1,0 +1,30 @@
+/* Shared styles for preview cards.
+   Each card is a self-contained HTML doc that links this file +
+   colors_and_type.css. Cards are sized ~700×<150-400>px and shown
+   in the Design System tab. Keep them dense but decoration-free. */
+
+* { box-sizing: border-box; }
+html, body {
+  margin: 0;
+  padding: 0;
+  background: var(--bt-cream);
+  color: var(--fg-1);
+  font-family: var(--font-body);
+}
+.card {
+  padding: 20px 24px;
+  min-height: 100%;
+}
+.row { display: flex; align-items: center; gap: 14px; }
+.col { display: flex; flex-direction: column; gap: 14px; }
+.grid { display: grid; gap: 12px; }
+
+.label {
+  font-family: var(--font-body);
+  font-weight: 800;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--fg-3);
+}
+.mono { font-family: var(--font-mono); font-size: 12px; color: var(--fg-2); }

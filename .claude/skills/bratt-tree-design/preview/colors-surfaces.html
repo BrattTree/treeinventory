@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><title>Paper Surfaces</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<link rel="stylesheet" href="preview.css">
+<style>
+.surfaces { display:grid; grid-template-columns: repeat(4, 1fr); gap:12px; }
+.s { border:2px solid var(--bt-ink); border-radius:14px; overflow:hidden; height:120px; display:flex; flex-direction:column; justify-content:flex-end; }
+.s .meta { padding:8px 10px; background:rgba(255,255,255,.92); border-top:2px solid var(--bt-ink); }
+.s .name { font-weight:800; font-size:12px; letter-spacing:.04em; text-transform:uppercase; }
+.s .hex { font-family: var(--font-mono); font-size:11px; color:var(--fg-2); }
+.dark .meta { background:rgba(26,14,5,.85); color:var(--bt-cream); }
+.dark .hex { color:rgba(255,248,236,.7); }
+</style></head>
+<body><div class="card">
+  <div class="surfaces">
+    <div class="s" style="background:var(--bt-cream)"><div class="meta"><div class="name">Cream · Page</div><div class="hex">#FFF8EC</div></div></div>
+    <div class="s" style="background:var(--bt-paper)"><div class="meta"><div class="name">Paper</div><div class="hex">#FAF2DE</div></div></div>
+    <div class="s" style="background:var(--bt-bone)"><div class="meta"><div class="name">Bone · Panel</div><div class="hex">#F5EDDB</div></div></div>
+    <div class="s dark" style="background:var(--bt-bark)"><div class="meta"><div class="name">Bark · Dark</div><div class="hex">#26190E</div></div></div>
+  </div>
+</div></body></html>

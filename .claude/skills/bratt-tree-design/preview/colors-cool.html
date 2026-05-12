@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><title>Cool Accents</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<link rel="stylesheet" href="preview.css">
+<style>
+.swatches { display:grid; grid-template-columns: repeat(3, 1fr); gap:14px; }
+.sw { border:2px solid var(--bt-ink); border-radius:14px; overflow:hidden; }
+.sw .chip { height:70px; }
+.sw .meta { padding:8px 10px; background:#fff; border-top:2px solid var(--bt-ink); }
+.sw .name { font-weight:800; font-size:12px; letter-spacing:.04em; text-transform:uppercase; }
+.sw .hex { font-family: var(--font-mono); font-size:11px; color:var(--fg-2); }
+.note { font-size:11px; color:var(--fg-3); margin-top:10px; }
+</style></head>
+<body><div class="card">
+  <div class="swatches">
+    <div class="sw"><div class="chip" style="background:var(--bt-teal)"></div><div class="meta"><div class="name">Teal</div><div class="hex">#0096AA · PMS 7711</div></div></div>
+    <div class="sw"><div class="chip" style="background:var(--bt-teal-mid)"></div><div class="meta"><div class="name">Teal Mid</div><div class="hex">#188CB2 · PMS 7459</div></div></div>
+    <div class="sw"><div class="chip" style="background:var(--bt-navy)"></div><div class="meta"><div class="name">Navy</div><div class="hex">#005679 · PMS 634</div></div></div>
+  </div>
+  <div class="note">Used only inside the mascot-circle halftone and for very occasional information accents — never as a primary surface.</div>
+</div></body></html>

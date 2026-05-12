@@ -5,145 +5,210 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Bratt Tree — Tree Inventory</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Barlow+Condensed:wght@400;600;700&display=swap');
+  /* ============================================================
+     Bratt Tree Tree-Inventory App
+     Built on the Bratt Tree Design System (KickCharge brand book)
+     Tokens mirror .claude/skills/bratt-tree-design/colors_and_type.css
+     ============================================================ */
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+
   :root {
-    --brown-dark:#26190E;--brown-mid:#7A4120;--brown-tan:#CC813B;
-    --orange:#EB4C1B;--orange-light:#EC511B;--yellow:#E9E71D;--yellow-light:#f5f490;
-    --cream:#fffdf7;--parchment:#f7f2e8;--border:#c8b99a;--shadow:rgba(38,25,14,0.15);
-    --ok:#448629;--warn:#A35817;--danger:#b84040;
+    /* Core brand */
+    --bt-orange:#EB4C1B; --bt-orange-warm:#EC511B;
+    --bt-lime:#E9E71D;   --bt-green-dark:#448629;
+    /* Wood / neutrals */
+    --bt-bark:#26190E;   --bt-bark-deep:#3D2B14;
+    --bt-wood:#7A4120;   --bt-wood-warm:#A35817; --bt-wood-light:#CC813B;
+    /* Paper & surfaces */
+    --bt-cream:#FFF8EC;  --bt-bone:#F5EDDB; --bt-paper:#FAF2DE; --bt-paper-edge:#E8DCC0;
+    --bt-ink:#1A0E05;
+    /* Semantic */
+    --accent:var(--bt-orange);
+    --accent-hover:#D43F12;
+    --accent-press:#B83410;
+    --fg-1:var(--bt-ink);  --fg-2:#4A3826;  --fg-3:#7A6B55;
+    --bg-page:var(--bt-cream);
+    --bg-card:#FFFFFF;
+    --bg-dark:var(--bt-bark);
+    --border:var(--bt-paper-edge);
+    --keyline:var(--bt-lime);
+    --success:var(--bt-green-dark);  --warning:var(--bt-wood-warm);  --danger:#B83410;
+    /* Type */
+    --font-headline:"Nunito","Helvetica Neue",system-ui,sans-serif;
+    --font-body:"Nunito","Helvetica Neue",system-ui,sans-serif;
+    /* Radii */
+    --r-control:14px; --r-card:22px; --r-pill:999px;
+    /* Shadows */
+    --sh-1:0 1px 0 rgba(26,14,5,.06),0 2px 6px rgba(26,14,5,.05);
+    --sh-2:0 4px 14px rgba(26,14,5,.10),0 1px 0 rgba(26,14,5,.04);
+    /* Motion */
+    --t-fast:120ms; --t-base:200ms;
+    --ease-out:cubic-bezier(.2,.7,.2,1);
   }
+
   *{box-sizing:border-box;margin:0;padding:0;}
-  body{background:var(--parchment);font-family:'DM Mono',monospace;color:var(--brown-dark);min-height:100vh;}
+  html,body{color:var(--fg-1);background:var(--bg-page);}
+  body{font-family:var(--font-body);font-size:15px;line-height:1.55;min-height:100vh;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;}
+  ::selection{background:var(--bt-lime);color:var(--bt-ink);}
 
-  header{background:var(--brown-dark);padding:0;display:flex;align-items:stretch;min-height:90px;border-bottom:4px solid var(--orange);}
-  .header-logo{background:var(--brown-dark);padding:10px 20px 10px 28px;display:flex;align-items:center;flex-shrink:0;border-right:3px solid var(--orange);}
+  /* ── Header ─────────────────────────────────────────────── */
+  header{background:var(--bt-bark);display:flex;align-items:stretch;min-height:96px;
+    border-bottom:4px solid var(--bt-orange);
+    box-shadow:inset 0 -7px 0 var(--bt-lime),0 2px 0 rgba(0,0,0,.08);}
+  .header-logo{background:var(--bt-bark);padding:10px 24px 10px 28px;display:flex;align-items:center;flex-shrink:0;
+    border-right:3px solid var(--bt-orange);}
   .header-logo img{height:72px;width:auto;display:block;}
-  .header-title{padding:14px 24px;display:flex;flex-direction:column;justify-content:center;gap:2px;}
-  .header-title h1{font-family:'Barlow Condensed',sans-serif;font-size:2rem;font-weight:700;letter-spacing:0.12em;color:var(--yellow);line-height:1;text-transform:uppercase;}
+  .header-title{padding:16px 28px;display:flex;flex-direction:column;justify-content:center;gap:4px;}
+  .header-title .eyebrow{font-family:var(--font-headline);font-weight:800;font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:var(--bt-lime);opacity:0.85;}
+  .header-title h1{font-family:var(--font-headline);font-weight:900;font-size:1.9rem;letter-spacing:0.04em;color:#fff;line-height:1;text-transform:uppercase;}
   .header-meta{display:flex;gap:18px;flex-wrap:wrap;margin-left:auto;padding:14px 28px 14px 0;align-items:center;}
-  .meta-field{display:flex;flex-direction:column;gap:3px;}
-  .meta-field label{font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:white;opacity:0.75;}
-  .meta-field input{background:transparent;border:none;border-bottom:1px solid var(--brown-tan);color:white;font-family:'DM Mono',monospace;font-size:12px;padding:2px 0;width:130px;outline:none;}
-  .meta-field input:focus{border-bottom-color:var(--yellow);}
-  .meta-field input::placeholder{color:rgba(255,255,255,0.3);}
+  .meta-field{display:flex;flex-direction:column;gap:4px;}
+  .meta-field label{font-family:var(--font-body);font-weight:700;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.65);}
+  .meta-field input{background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,255,255,0.18);color:#fff;font-family:var(--font-body);font-weight:600;font-size:13px;padding:6px 10px;width:140px;outline:none;border-radius:8px;transition:border-color var(--t-fast),background var(--t-fast),box-shadow var(--t-fast);}
+  .meta-field input:focus{border-color:var(--bt-lime);background:rgba(255,255,255,0.10);box-shadow:0 0 0 3px rgba(233,231,29,0.25);}
+  .meta-field input::placeholder{color:rgba(255,255,255,0.35);font-weight:400;}
 
-  .toolbar{background:var(--brown-mid);padding:9px 32px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;border-bottom:2px solid var(--brown-dark);}
-  .save-status{font-size:10px;color:var(--yellow-light);opacity:0.75;margin-left:auto;display:flex;align-items:center;gap:6px;}
-  .save-dot{width:7px;height:7px;border-radius:50%;background:#448629;flex-shrink:0;}
-  .save-dot.unsaved{background:var(--orange);}
-  .toolbar button{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;padding:6px 16px;border-radius:3px;cursor:pointer;transition:all 0.15s;border:1px solid rgba(255,255,255,0.2);}
-  .btn-primary{background:var(--orange);color:white;border-color:var(--orange);}
-  .btn-primary:hover{background:#d44318;}
-  .btn-ghost{background:transparent;color:var(--yellow-light);}
-  .btn-ghost:hover{background:rgba(255,255,255,0.1);}
-  .btn-danger{background:transparent;color:#e8a0a0;border-color:rgba(232,160,160,0.3);}
-  .btn-danger:hover{background:rgba(184,64,64,0.3);}
-  .btn-export{background:var(--yellow);color:var(--brown-dark);border-color:var(--yellow);font-weight:500;}
-  .btn-export:hover{background:var(--yellow-light);}
-  .btn-zip{background:#2a5298;color:#d4e8c2;border-color:rgba(100,160,255,0.4);}
-  .btn-zip:hover{background:#3563b8;}
+  /* ── Toolbar ────────────────────────────────────────────── */
+  .toolbar{background:var(--bt-bark-deep);padding:12px 32px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+    border-bottom:2px solid var(--bt-bark);}
+  .toolbar button{font-family:var(--font-body);font-weight:800;font-size:12px;letter-spacing:0.06em;text-transform:uppercase;
+    padding:10px 18px;border-radius:var(--r-pill);cursor:pointer;border:none;
+    display:inline-flex;align-items:center;gap:6px;
+    transition:background var(--t-fast) var(--ease-out),color var(--t-fast),box-shadow var(--t-fast);}
+  .btn-primary{background:var(--bt-orange);color:#fff;}
+  .btn-primary:hover{background:var(--accent-hover);}
+  .btn-primary:active{background:var(--accent-press);}
+  .btn-export{background:var(--bt-lime);color:var(--bt-ink);}
+  .btn-export:hover{background:#d6d419;}
+  .btn-zip{background:var(--bt-cream);color:var(--bt-ink);box-shadow:inset 0 0 0 2px var(--bt-ink);}
+  .btn-zip:hover{background:#fff;}
+  .btn-ghost{background:transparent;color:var(--bt-cream);box-shadow:inset 0 0 0 2px rgba(255,248,236,0.55);}
+  .btn-ghost:hover{background:var(--bt-cream);color:var(--bt-ink);box-shadow:none;}
+  .btn-danger{background:transparent;color:#f0c2bd;box-shadow:inset 0 0 0 2px rgba(240,194,189,0.45);}
+  .btn-danger:hover{background:rgba(184,52,16,0.20);color:#ffd9d3;}
+  .toolbar button:focus-visible{outline:none;box-shadow:0 0 0 3px var(--bt-lime),0 0 0 5px var(--bt-bark);}
+  .save-status{font-family:var(--font-body);font-weight:600;font-size:11px;color:rgba(255,248,236,0.75);margin-left:auto;display:flex;align-items:center;gap:8px;letter-spacing:0.04em;}
+  .save-dot{width:9px;height:9px;border-radius:50%;background:var(--bt-green-dark);flex-shrink:0;box-shadow:0 0 0 2px rgba(72,134,41,0.25);}
+  .save-dot.unsaved{background:var(--bt-orange);box-shadow:0 0 0 2px rgba(235,76,27,0.25);}
 
-  .stats-bar{background:var(--cream);border-bottom:1px solid var(--border);padding:8px 32px;display:flex;gap:28px;font-size:11px;color:var(--brown-mid);flex-wrap:wrap;}
-  .stat{display:flex;gap:6px;align-items:center;}
-  .stat strong{color:var(--brown-dark);font-size:13px;}
-  .dot{width:8px;height:8px;border-radius:50%;}
-  .dot-ok{background:var(--ok);}.dot-warn{background:var(--warn);}.dot-danger{background:var(--danger);}
+  /* ── Stats bar ──────────────────────────────────────────── */
+  .stats-bar{background:var(--bt-bone);border-bottom:1px solid var(--border);padding:10px 32px;display:flex;gap:28px;font-family:var(--font-body);font-weight:600;font-size:12px;color:var(--fg-2);flex-wrap:wrap;}
+  .stat{display:flex;gap:8px;align-items:center;}
+  .stat strong{color:var(--bt-ink);font-weight:900;font-size:14px;}
+  .dot{width:9px;height:9px;border-radius:50%;}
+  .dot-ok{background:var(--success);}
+  .dot-warn{background:var(--warning);}
+  .dot-danger{background:var(--danger);}
 
-  .table-wrap{overflow-x:auto;padding:20px 32px 60px;}
-  table{width:100%;border-collapse:collapse;min-width:900px;background:var(--cream);border:1px solid var(--border);border-radius:6px;overflow:hidden;box-shadow:0 2px 14px var(--shadow);}
-  thead tr{background:var(--brown-dark);}
-  th{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.14em;text-transform:uppercase;padding:11px 10px;text-align:left;white-space:nowrap;font-weight:500;color:white;}
+  /* ── Table ──────────────────────────────────────────────── */
+  .table-wrap{overflow-x:auto;padding:24px 32px 60px;}
+  table{width:100%;border-collapse:collapse;min-width:900px;
+    background:linear-gradient(180deg,#FFFFFF 0%,#FFFBE9 100%);
+    border:2px solid var(--bt-ink);border-radius:18px;overflow:hidden;
+    box-shadow:0 0 0 3px var(--bt-lime),0 6px 0 rgba(26,14,5,.10),0 12px 32px rgba(26,14,5,.14);}
+  thead tr{background:var(--bt-bark);}
+  th{font-family:var(--font-body);font-weight:800;font-size:10px;letter-spacing:0.16em;text-transform:uppercase;padding:14px 12px;text-align:left;white-space:nowrap;color:#fff;}
   th.center{text-align:center;}
-  tbody tr{border-bottom:1px solid var(--border);transition:background 0.1s;}
-  tbody tr:hover{background:#f0ebe0;}
+  tbody tr{border-bottom:1px solid var(--border);transition:background var(--t-fast);}
+  tbody tr:hover{background:rgba(233,231,29,0.10);}
   tbody tr:last-child{border-bottom:none;}
-  td{padding:7px 8px;vertical-align:middle;}
-  td.tree-num{font-size:11px;color:var(--brown-mid);font-weight:500;text-align:center;min-width:36px;}
+  td{padding:8px 10px;vertical-align:middle;}
+  td.tree-num{font-family:var(--font-body);font-weight:800;font-size:13px;color:var(--bt-wood);text-align:center;min-width:36px;}
 
-  td input[type="text"],td select,td textarea{font-family:'DM Mono',monospace;font-size:11px;color:var(--brown-dark);background:transparent;border:1px solid transparent;border-radius:3px;padding:4px 6px;width:100%;outline:none;transition:border-color 0.15s,background 0.15s;}
-  td input[type="text"]:focus,td select:focus,td textarea:focus{border-color:var(--orange);background:white;}
-  td input[type="text"]:hover,td select:hover{border-color:var(--border);background:rgba(255,255,255,0.6);}
+  td input[type="text"],td select,td textarea{
+    font-family:var(--font-body);font-weight:500;font-size:14px;color:var(--bt-ink);
+    background:transparent;border:1.5px solid transparent;border-radius:10px;
+    padding:6px 8px;width:100%;outline:none;
+    transition:border-color var(--t-fast),background var(--t-fast),box-shadow var(--t-fast);}
+  td input[type="text"]:hover,td select:hover,td textarea:hover{border-color:var(--border);background:rgba(255,255,255,0.7);}
+  td input[type="text"]:focus,td select:focus,td textarea:focus{border-color:var(--bt-ink);background:#fff;box-shadow:0 0 0 3px var(--bt-lime);}
   td select{cursor:pointer;}
-  select.cond-fair{color:var(--ok);}
-  select.cond-poor{color:var(--warn);}
-  select.cond-dead,select.cond-defective{color:var(--danger);}
+  select.cond-fair{color:var(--success);font-weight:700;}
+  select.cond-poor{color:var(--warning);font-weight:700;}
+  select.cond-dead,select.cond-defective{color:var(--danger);font-weight:700;}
   td.setback{text-align:center;}
   td.setback select{width:auto;}
   td.photo-cell{text-align:center;min-width:80px;}
+  td textarea{resize:none;height:42px;min-width:140px;font-size:13px;line-height:1.4;}
 
-  .photo-upload-btn{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border:1.5px dashed var(--border);border-radius:4px;cursor:pointer;color:var(--border);font-size:18px;transition:all 0.15s;background:transparent;}
-  .photo-upload-btn:hover{border-color:var(--orange);color:var(--orange);}
+  /* ── Photo upload / thumbs ──────────────────────────────── */
+  .photo-upload-btn{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;
+    border:2px dashed var(--border);border-radius:12px;cursor:pointer;color:var(--bt-wood-light);font-size:20px;font-weight:700;
+    background:transparent;transition:border-color var(--t-fast),color var(--t-fast),background var(--t-fast);}
+  .photo-upload-btn:hover{border-color:var(--bt-orange);color:var(--bt-orange);background:rgba(235,76,27,0.06);}
   .photo-thumb-wrap{position:relative;display:inline-block;cursor:pointer;}
-  .photo-thumb{width:40px;height:40px;object-fit:cover;border-radius:4px;border:1.5px solid var(--orange);display:block;transition:transform 0.15s;}
-  .photo-thumb:hover{transform:scale(1.12);}
-  .photo-remove{position:absolute;top:-5px;right:-5px;width:16px;height:16px;background:var(--danger);color:white;border:none;border-radius:50%;font-size:9px;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.15s;}
+  .photo-thumb{width:44px;height:44px;object-fit:cover;border-radius:10px;border:2px solid var(--bt-ink);display:block;transition:transform var(--t-fast);box-shadow:0 0 0 3px var(--bt-lime);}
+  .photo-thumb:hover{transform:scale(1.10);}
+  .photo-remove{position:absolute;top:-6px;right:-6px;width:18px;height:18px;background:var(--danger);color:#fff;border:1.5px solid var(--bt-ink);border-radius:50%;font-size:10px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity var(--t-fast);}
   .photo-thumb-wrap:hover .photo-remove{opacity:1;}
   input[type="file"]{display:none;}
 
-  .delete-row{background:transparent;border:none;color:var(--border);cursor:pointer;font-size:14px;padding:4px;border-radius:3px;transition:color 0.15s;line-height:1;}
-  .delete-row:hover{color:var(--danger);}
-  td textarea{resize:none;height:36px;min-width:120px;font-size:10px;line-height:1.4;}
+  /* ── Delete row ─────────────────────────────────────────── */
+  .delete-row{background:transparent;border:none;color:var(--bt-paper-edge);cursor:pointer;font-size:16px;padding:6px;border-radius:8px;transition:color var(--t-fast),background var(--t-fast);line-height:1;}
+  .delete-row:hover{color:var(--danger);background:rgba(184,52,16,0.10);}
 
-  tfoot tr td{padding:12px 10px;background:var(--parchment);}
+  tfoot tr td{padding:14px 12px;background:var(--bt-bone);text-align:center;}
+  tfoot button.btn-primary{font-family:var(--font-body);font-weight:800;font-size:12px;letter-spacing:0.06em;text-transform:uppercase;padding:10px 22px;border-radius:var(--r-pill);border:none;background:var(--bt-orange);color:#fff;cursor:pointer;transition:background var(--t-fast);}
+  tfoot button.btn-primary:hover{background:var(--accent-hover);}
 
-  /* Lightbox */
-  .lightbox{display:none;position:fixed;inset:0;background:rgba(20,10,4,0.92);z-index:1000;align-items:center;justify-content:center;flex-direction:column;gap:16px;backdrop-filter:blur(4px);}
+  /* ── Lightbox ───────────────────────────────────────────── */
+  .lightbox{display:none;position:fixed;inset:0;background:rgba(26,14,5,0.94);z-index:1000;align-items:center;justify-content:center;flex-direction:column;gap:16px;}
   .lightbox.active{display:flex;}
-  .lightbox img{max-width:90vw;max-height:82vh;border-radius:6px;object-fit:contain;}
-  .lightbox-caption{color:var(--yellow);font-family:'DM Mono',monospace;font-size:12px;letter-spacing:0.1em;}
-  .lightbox-close{position:absolute;top:20px;right:24px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:white;font-size:20px;width:38px;height:38px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:sans-serif;}
-  .lightbox-close:hover{background:rgba(235,76,27,0.5);}
+  .lightbox img{max-width:90vw;max-height:82vh;border-radius:14px;object-fit:contain;border:3px solid var(--bt-ink);box-shadow:0 0 0 4px var(--bt-lime);}
+  .lightbox-caption{color:var(--bt-lime);font-family:var(--font-body);font-weight:800;font-size:13px;letter-spacing:0.14em;text-transform:uppercase;}
+  .lightbox-close{position:absolute;top:20px;right:24px;background:var(--bt-orange);border:2px solid var(--bt-ink);color:#fff;font-size:18px;width:42px;height:42px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:sans-serif;font-weight:800;}
+  .lightbox-close:hover{background:var(--accent-hover);}
 
-  /* Export overlay */
-  #export-overlay{display:none;position:fixed;inset:0;background:rgba(20,10,4,0.75);z-index:2000;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+  /* ── Export overlay ─────────────────────────────────────── */
+  #export-overlay{display:none;position:fixed;inset:0;background:rgba(26,14,5,0.78);z-index:2000;align-items:center;justify-content:center;}
   #export-overlay.active{display:flex;}
-  .export-box{background:var(--cream);border:3px solid var(--orange);border-radius:8px;padding:30px 34px;max-width:420px;width:90%;}
-  .export-box h2{font-family:'Barlow Condensed',sans-serif;font-size:1.3rem;letter-spacing:0.04em;text-transform:uppercase;color:var(--brown-dark);margin-bottom:6px;}
-  .export-box p{font-size:11px;color:var(--brown-mid);margin-bottom:20px;line-height:1.6;}
+  .export-box{background:#fff;border:3px solid var(--bt-ink);border-radius:var(--r-card);
+    padding:32px 36px;max-width:460px;width:90%;
+    box-shadow:0 0 0 4px var(--bt-lime),0 12px 40px rgba(26,14,5,.40);}
+  .export-box h2{font-family:var(--font-headline);font-weight:900;font-size:1.4rem;letter-spacing:0.04em;text-transform:uppercase;color:var(--bt-ink);margin-bottom:8px;}
+  .export-box p{font-family:var(--font-body);font-size:13px;color:var(--fg-2);margin-bottom:22px;line-height:1.55;}
   .export-actions{display:flex;flex-direction:column;gap:10px;}
-  .export-actions button{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;padding:10px 16px;border-radius:4px;cursor:pointer;border:1px solid var(--border);text-align:left;}
-  .export-btn-html{background:var(--orange);color:white;border-color:var(--orange);}
-  .export-btn-html:hover{background:#d44318;}
-  .export-btn-print{background:var(--brown-dark);color:var(--yellow);border-color:var(--brown-dark);}
-  .export-btn-print:hover{background:var(--brown-mid);}
-  .export-btn-cancel{background:transparent;color:var(--brown-mid);}
-  .export-btn-cancel:hover{background:var(--parchment);}
-  .export-actions button small{display:block;font-size:9px;opacity:0.7;margin-top:2px;letter-spacing:0.04em;text-transform:none;}
+  .export-actions button{font-family:var(--font-body);font-weight:800;font-size:13px;letter-spacing:0.04em;text-transform:uppercase;padding:14px 18px;border-radius:14px;cursor:pointer;border:none;text-align:left;transition:background var(--t-fast),color var(--t-fast);}
+  .export-btn-html{background:var(--bt-orange);color:#fff;}
+  .export-btn-html:hover{background:var(--accent-hover);}
+  .export-btn-print{background:var(--bt-bark);color:var(--bt-lime);}
+  .export-btn-print:hover{background:var(--bt-bark-deep);}
+  .export-btn-cancel{background:transparent;color:var(--fg-2);box-shadow:inset 0 0 0 2px var(--border);}
+  .export-btn-cancel:hover{background:var(--bt-bone);}
+  .export-actions button small{display:block;font-size:11px;opacity:0.78;margin-top:4px;letter-spacing:0;text-transform:none;font-weight:600;}
 
-  /* Photo sheet */
+  /* ── Photo sheet (print only) ───────────────────────────── */
   .photo-sheet{display:none;}
   .photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;padding:24px 32px;}
-  .photo-card{border:1px solid var(--border);border-radius:6px;overflow:hidden;background:var(--cream);break-inside:avoid;}
-  .photo-card-label{background:var(--brown-dark);color:var(--yellow);font-size:10px;letter-spacing:0.1em;padding:5px 10px;font-family:'Barlow Condensed',sans-serif;}
+  .photo-card{border:2px solid var(--bt-ink);border-radius:18px;overflow:hidden;background:#fff;break-inside:avoid;box-shadow:0 0 0 3px var(--bt-lime);}
+  .photo-card-label{background:var(--bt-bark);color:var(--bt-lime);font-family:var(--font-headline);font-weight:900;font-size:12px;letter-spacing:0.12em;text-transform:uppercase;padding:7px 12px;}
   .photo-card img{width:100%;height:160px;object-fit:cover;display:block;cursor:pointer;}
-  .photo-card-meta{padding:6px 10px;font-size:9px;color:var(--brown-mid);line-height:1.5;}
+  .photo-card-meta{padding:7px 12px;font-family:var(--font-body);font-weight:600;font-size:11px;color:var(--fg-2);line-height:1.45;}
 
-  /* Exported HTML lightbox */
-  .lb{display:none;position:fixed;inset:0;background:rgba(20,10,4,0.92);z-index:9999;align-items:center;justify-content:center;flex-direction:column;gap:14px;cursor:zoom-out;}
+  /* ── Exported HTML lightbox (used in serialized output) ─── */
+  .lb{display:none;position:fixed;inset:0;background:rgba(26,14,5,0.94);z-index:9999;align-items:center;justify-content:center;flex-direction:column;gap:14px;cursor:zoom-out;}
   .lb.on{display:flex;}
-  .lb img{max-width:92vw;max-height:84vh;border-radius:6px;object-fit:contain;}
-  .lb-cap{color:var(--yellow);font-family:'DM Mono',monospace;font-size:12px;letter-spacing:0.08em;}
-  .lb-x{position:absolute;top:18px;right:22px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:white;font-size:20px;width:38px;height:38px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:sans-serif;}
+  .lb img{max-width:92vw;max-height:84vh;border-radius:14px;object-fit:contain;}
+  .lb-cap{color:var(--bt-lime);font-family:var(--font-body);font-weight:800;font-size:13px;letter-spacing:0.14em;text-transform:uppercase;}
+  .lb-x{position:absolute;top:18px;right:22px;background:var(--bt-orange);border:2px solid var(--bt-ink);color:#fff;font-size:18px;width:42px;height:42px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:sans-serif;}
 
+  /* ── Print rules ────────────────────────────────────────── */
   @media print {
     .toolbar,.stats-bar,.delete-row,.photo-upload-btn,#export-overlay,.lightbox,tfoot{display:none!important;}
     header{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
-    table{box-shadow:none;font-size:9px;}
+    table{box-shadow:none;font-size:10px;border:1px solid #c8b99a;border-radius:6px;}
     th:last-of-type,td.photo-cell,th.center:last-of-type{display:none!important;}
     .table-wrap{padding:8px 12px;}
     body{background:white;}
 
-    /* Hide placeholders and interactive elements */
     td input::placeholder,td textarea::placeholder{color:transparent!important;}
     td select{-webkit-appearance:none;appearance:none;background:transparent!important;border:none!important;padding:2px 4px;}
-    td input[type="text"],td textarea{border:none!important;background:transparent!important;padding:2px 4px;}
+    td input[type="text"],td textarea{border:none!important;background:transparent!important;padding:2px 4px;box-shadow:none!important;}
     td textarea{height:auto!important;overflow:hidden;}
 
-    /* Tighter rows */
     td,th{padding:5px 6px!important;}
     tbody tr{border-bottom:1px solid #ddd;}
 
-    /* Fit table to page */
     .table-wrap{overflow:visible!important;}
     table{min-width:0!important;width:100%!important;table-layout:fixed;}
     th:nth-child(1),td:nth-child(1){width:5%;}
@@ -157,6 +222,7 @@
     .photo-sheet{display:block!important;}
     .photo-sheet-page{page-break-before:always;}
     .photo-grid{grid-template-columns:repeat(2,1fr);gap:24px;padding:20px 24px;}
+    .photo-card{box-shadow:none;border:1px solid #c8b99a;border-radius:6px;}
     .photo-card img{height:260px;}
     .photo-card-label{font-size:11px;padding:6px 10px;}
     .photo-card-meta{font-size:9px;padding:6px 10px;}
@@ -172,6 +238,7 @@
     <img src="https://www.bratttree.com/wp-content/uploads/2025/10/badge-logo.svg" alt="Bratt Tree Logo">
   </div>
   <div class="header-title">
+    <span class="eyebrow">Bratt Tree Company</span>
     <h1>Tree Inventory</h1>
   </div>
   <div class="header-meta">
@@ -187,6 +254,7 @@
   <button class="btn-export" onclick="showExport()">↓ Download / Print</button>
   <button class="btn-zip" onclick="downloadImages()">↓ Download Images</button>
   <button class="btn-ghost" onclick="exportCSV()">↓ Export CSV</button>
+  <button class="btn-ghost" onclick="startNewInventory()">↻ Start New Inventory</button>
   <button class="btn-danger" onclick="clearAll()">✕ Clear All</button>
   <div class="save-status"><span class="save-dot" id="save-dot"></span><span id="save-label">Not saved yet</span></div>
 </div>
@@ -211,7 +279,7 @@
     <tfoot>
       <tr>
         <td colspan="8">
-          <button class="btn-primary" onclick="addRow()" style="font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:6px 16px;border:1px solid var(--orange);border-radius:3px;cursor:pointer;background:var(--orange);color:white;">＋ Add Row</button>
+          <button class="btn-primary" onclick="addRow()">＋ Add Row</button>
         </td>
       </tr>
     </tfoot>
@@ -221,8 +289,8 @@
 <!-- Photo sheet for printing -->
 <div class="photo-sheet" id="photo-sheet">
   <div class="photo-sheet-page">
-    <header style="-webkit-print-color-adjust:exact;print-color-adjust:exact;background:#26190E;border-bottom:4px solid #EB4C1B;padding:16px 32px;">
-      <div style="font-family:'Barlow Condensed',sans-serif;font-size:1.3rem;font-weight:700;letter-spacing:0.12em;color:#E9E71D;text-transform:uppercase;">Tree Inventory — Photo Reference</div>
+    <header style="-webkit-print-color-adjust:exact;print-color-adjust:exact;background:#26190E;border-bottom:4px solid #EB4C1B;padding:18px 32px;">
+      <div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:1.4rem;letter-spacing:0.06em;color:#E9E71D;text-transform:uppercase;">Tree Inventory — Photo Reference</div>
     </header>
     <div class="photo-grid" id="photo-grid"></div>
   </div>
@@ -255,113 +323,7 @@
 </div>
 
 <script>
-const existingData=[
-  {num:1,species:"Spruce",dbh:"7",condition:"Fair",notes:"",setback:"N"},
-  {num:2,species:"Spruce",dbh:"7",condition:"Fair",notes:"",setback:"N"},
-  {num:3,species:"Spruce",dbh:"7",condition:"Fair",notes:"",setback:"N"},
-  {num:4,species:"Spruce",dbh:"7",condition:"Fair",notes:"",setback:"N"},
-  {num:5,species:"Spruce",dbh:"7",condition:"Fair",notes:"",setback:"N"},
-  {num:6,species:"Spruce",dbh:"7",condition:"Fair",notes:"",setback:"N"},
-  {num:7,species:"Spruce",dbh:"7",condition:"Fair",notes:"",setback:"N"},
-  {num:8,species:"Spruce",dbh:"7",condition:"Fair",notes:"",setback:"N"},
-  {num:9,species:"Spruce",dbh:"7",condition:"Fair",notes:"",setback:"N"},
-  {num:10,species:"Spruce",dbh:"7",condition:"Fair",notes:"",setback:"N"},
-  {num:11,species:"Spruce",dbh:"7",condition:"Fair",notes:"",setback:"N"},
-  {num:12,species:"Poplar",dbh:"10.5",condition:"Dead",notes:"",setback:"Y"},
-  {num:13,species:"Poplar",dbh:"10.5",condition:"Dead",notes:"",setback:"Y"},
-  {num:14,species:"Poplar",dbh:"10.5",condition:"Dead",notes:"",setback:"Y"},
-  {num:15,species:"Poplar",dbh:"10.5",condition:"Dead",notes:"",setback:"Y"},
-  {num:16,species:"Poplar",dbh:"10.5",condition:"Dead",notes:"",setback:"Y"},
-  {num:17,species:"Spruce",dbh:"9",condition:"Fair",notes:"Spider Mites",setback:"Y"},
-  {num:18,species:"Box Elder",dbh:"25",condition:"Fair",notes:"",setback:"Y"},
-  {num:19,species:"Red Oak",dbh:"31",condition:"Poor",notes:"Two Lined Chestnut Borer",setback:"Y"},
-  {num:20,species:"Basswood",dbh:"24",condition:"Poor",notes:"Severe Lean Over Structure",setback:"Y"},
-  {num:21,species:"Spruce",dbh:"8",condition:"Poor",notes:"",setback:"N"},
-  {num:22,species:"Ash",dbh:"14",condition:"Poor",notes:"EAB",setback:"Y"},
-  {num:23,species:"Ash",dbh:"19",condition:"Poor",notes:"EAB",setback:"Y"},
-  {num:24,species:"Willow",dbh:"48",condition:"Structurally Defective",notes:"Major Structural Defects",setback:"Y"},
-  {num:25,species:"Spruce",dbh:"9",condition:"Fair",notes:"",setback:"Y"},
-  {num:26,species:"Red Maple",dbh:"21",condition:"Poor",notes:"Half Dead",setback:"Y"},
-  {num:27,species:"Red Maple",dbh:"29",condition:"Poor",notes:"Large Defect in Trunk",setback:"Y"},
-  {num:28,species:"Sugar Maple",dbh:"34",condition:"Poor",notes:"Large Defect in Trunk",setback:"Y"},
-  {num:29,species:"Basswood",dbh:"20",condition:"Fair",notes:"",setback:"Y"},
-  {num:30,species:"Willow",dbh:"40",condition:"Fair",notes:"",setback:"Y"},
-  {num:31,species:"Basswood",dbh:"28",condition:"Fair",notes:"",setback:"On Line"},
-  {num:32,species:"Linden",dbh:"20",condition:"Fair",notes:"",setback:"On Line"},
-  {num:33,species:"Red Pine",dbh:"12",condition:"Fair",notes:"Diplodia",setback:"N"},
-  {num:34,species:"Red Pine",dbh:"12",condition:"Fair",notes:"Diplodia",setback:"N"},
-  {num:35,species:"Red Pine",dbh:"12",condition:"Fair",notes:"Diplodia",setback:"N"},
-  {num:36,species:"Red Pine",dbh:"12",condition:"Fair",notes:"Diplodia",setback:"N"},
-  {num:37,species:"Red Pine",dbh:"12",condition:"Fair",notes:"Diplodia",setback:"N"},
-  {num:38,species:"Bur Oak",dbh:"46",condition:"Fair",notes:"",setback:"N"},
-  {num:39,species:"Willow",dbh:"41",condition:"Fair",notes:"",setback:"Y"},
-  {num:40,species:"Willow",dbh:"34",condition:"Fair",notes:"Tip Dieback",setback:"Y"},
-  {num:41,species:"White Pine",dbh:"8",condition:"Fair",notes:"",setback:"On Line"},
-  {num:42,species:"White Pine",dbh:"18",condition:"Fair",notes:"",setback:"Y"},
-  {num:43,species:"Blue Spruce",dbh:"17",condition:"Fair",notes:"",setback:"Y"},
-  {num:44,species:"Blue Spruce",dbh:"10",condition:"Poor",notes:"Rhizosphaera Needle Cast",setback:"Y"},
-  {num:45,species:"Red Cedar",dbh:"7",condition:"Fair",notes:"",setback:"On Line"},
-  {num:46,species:"Red Cedar",dbh:"7",condition:"Fair",notes:"",setback:"On Line"},
-  {num:47,species:"Red Cedar",dbh:"5",condition:"Fair",notes:"",setback:"On Line"},
-  {num:48,species:"Red Cedar",dbh:"5",condition:"Fair",notes:"",setback:"On Line"},
-  {num:49,species:"Red Cedar",dbh:"7",condition:"Fair",notes:"",setback:"On Line"},
-  {num:50,species:"Basswood",dbh:"30",condition:"Fair",notes:"",setback:"N"},
-  {num:51,species:"Hackberry",dbh:"17",condition:"Fair",notes:"",setback:"N"},
-  {num:52,species:"Red Cedar",dbh:"7",condition:"Fair",notes:"",setback:"N"},
-  {num:53,species:"Red Cedar",dbh:"7",condition:"Fair",notes:"",setback:"N"},
-  {num:54,species:"Red Cedar",dbh:"5",condition:"Fair",notes:"",setback:"N"},
-  {num:55,species:"Red Cedar",dbh:"5",condition:"Fair",notes:"",setback:"N"},
-  {num:56,species:"Spruce",dbh:"6",condition:"Poor",notes:"Rhizosphaera Needle Cast",setback:"Y"},
-  {num:57,species:"Basswood",dbh:"17",condition:"Fair",notes:"",setback:"N"},
-  {num:58,species:"Basswood",dbh:"17",condition:"Fair",notes:"",setback:"On Line"},
-  {num:59,species:"Basswood",dbh:"17",condition:"Fair",notes:"",setback:"On Line"},
-  {num:60,species:"Willow",dbh:"44",condition:"Structurally Defective",notes:"",setback:"Y"},
-  {num:61,species:"Willow",dbh:"23",condition:"Fair",notes:"",setback:"Y"},
-  {num:62,species:"Willow",dbh:"29",condition:"Fair",notes:"",setback:"Y"},
-  {num:63,species:"Willow",dbh:"22",condition:"Fair",notes:"",setback:"Y"},
-  {num:64,species:"Ash",dbh:"13",condition:"Poor",notes:"EAB",setback:"Y"},
-  {num:65,species:"Blue Spruce",dbh:"8",condition:"Poor",notes:"Spider Mites",setback:"Y"},
-  {num:66,species:"Blue Spruce",dbh:"9",condition:"Fair",notes:"",setback:"N"},
-  {num:67,species:"Basswood",dbh:"20",condition:"Fair",notes:"",setback:"Y"},
-  {num:68,species:"Basswood",dbh:"26",condition:"Fair",notes:"",setback:"Y"},
-  {num:69,species:"Hackberry",dbh:"18",condition:"Fair",notes:"",setback:"Y"},
-  {num:70,species:"Willow",dbh:"31",condition:"Dead",notes:"",setback:"Y"},
-  {num:71,species:"Willow",dbh:"30",condition:"Fair",notes:"",setback:"Y"},
-  {num:72,species:"Willow",dbh:"21",condition:"Fair",notes:"",setback:"Y"},
-  {num:73,species:"Black Willow",dbh:"12",condition:"Fair",notes:"",setback:"Y"},
-  {num:74,species:"River Birch",dbh:"10",condition:"Fair",notes:"",setback:"Y"},
-  {num:75,species:"River Birch",dbh:"8",condition:"Fair",notes:"",setback:"Y"},
-  {num:76,species:"Willow",dbh:"9",condition:"Fair",notes:"",setback:"N"},
-  {num:77,species:"Willow",dbh:"6",condition:"Fair",notes:"",setback:"Y"},
-  {num:78,species:"Elm",dbh:"24",condition:"Fair",notes:"",setback:"Y"},
-  {num:79,species:"River Birch",dbh:"6",condition:"Fair",notes:"",setback:"Y"},
-  {num:80,species:"Willow",dbh:"15",condition:"Structurally Defective",notes:"",setback:"Y"},
-  {num:81,species:"River Birch",dbh:"7",condition:"Fair",notes:"",setback:"Y"},
-  {num:82,species:"Willow",dbh:"47",condition:"Structurally Defective",notes:"",setback:"Y"},
-  {num:83,species:"Willow",dbh:"54",condition:"Fair",notes:"",setback:"Y"},
-  {num:84,species:"Willow",dbh:"52",condition:"Structurally Defective",notes:"",setback:"Y"},
-  {num:85,species:"Willow",dbh:"46",condition:"Fair",notes:"",setback:"Y"},
-  {num:86,species:"White Pine",dbh:"12",condition:"Fair",notes:"",setback:"Y"},
-  {num:87,species:"White Pine",dbh:"12",condition:"Fair",notes:"",setback:"Y"},
-  {num:88,species:"White Pine",dbh:"12",condition:"Fair",notes:"",setback:"Y"},
-  {num:89,species:"White Pine",dbh:"12",condition:"Fair",notes:"",setback:"Y"},
-  {num:90,species:"Box Elder",dbh:"6",condition:"Fair",notes:"",setback:"Y"},
-  {num:91,species:"Elm",dbh:"6",condition:"Fair",notes:"",setback:"Y"},
-  {num:92,species:"Red Cedar",dbh:"16",condition:"Fair",notes:"",setback:"Y"},
-  {num:93,species:"Red Cedar",dbh:"16",condition:"Fair",notes:"",setback:"Y"},
-  {num:94,species:"White Pine",dbh:"13",condition:"Fair",notes:"",setback:"Y"},
-  {num:95,species:"Blue Spruce",dbh:"14",condition:"Poor",notes:"Spider Mites, Rhizosphaera",setback:"N"},
-  {num:96,species:"Blue Spruce",dbh:"17",condition:"Poor",notes:"Spider Mites, Rhizosphaera",setback:"N"},
-  {num:97,species:"Scotch Pine",dbh:"24",condition:"Fair",notes:"",setback:"N"},
-  {num:98,species:"Scotch Pine",dbh:"20",condition:"Fair",notes:"",setback:"N"},
-  {num:99,species:"Scotch Pine",dbh:"19",condition:"Fair",notes:"",setback:"N"},
-  {num:100,species:"Austrian Pine",dbh:"25",condition:"Fair",notes:"",setback:"N"},
-  {num:101,species:"Austrian Pine",dbh:"21",condition:"Fair",notes:"",setback:"N"},
-  {num:102,species:"Scotch Pine",dbh:"24",condition:"Fair",notes:"",setback:"N"},
-  {num:103,species:"Ponderosa Pine",dbh:"22",condition:"Fair",notes:"",setback:"N"},
-  {num:104,species:"Scotch Pine",dbh:"26",condition:"Fair",notes:"",setback:"N"},
-  {num:105,species:"Blue Spruce",dbh:"13",condition:"Poor",notes:"Spider Mites",setback:"N"}
-];
+const DEFAULT_BLANK_ROWS=5;
 
 const conditions=["Fair","Poor","Dead","Structurally Defective","Rhizosphaera Needle Cast","EAB","Diplodia","Other"];
 const setbackOpts=["N","Y","On Line"];
@@ -585,48 +547,50 @@ function serializeToHTML(){
 <html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Bratt Tree${site?' — '+site:''}${date?' ('+date+')':''}</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Barlow+Condensed:wght@400;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
 *{box-sizing:border-box;margin:0;padding:0;}
-body{background:#f7f2e8;font-family:'DM Mono',monospace;color:#26190E;}
-header{background:#26190E;display:flex;align-items:stretch;min-height:90px;border-bottom:4px solid #EB4C1B;}
-.hlogo{padding:10px 20px 10px 28px;display:flex;align-items:center;border-right:3px solid #EB4C1B;}
-.htitle{padding:14px 24px;display:flex;flex-direction:column;justify-content:center;}
-.htitle h1{font-family:'Barlow Condensed',sans-serif;font-size:2rem;font-weight:700;letter-spacing:0.12em;color:#E9E71D;text-transform:uppercase;}
+body{background:#FFF8EC;font-family:'Nunito','Helvetica Neue',sans-serif;font-size:15px;line-height:1.55;color:#1A0E05;-webkit-font-smoothing:antialiased;}
+header{background:#26190E;display:flex;align-items:stretch;min-height:96px;border-bottom:4px solid #EB4C1B;box-shadow:inset 0 -7px 0 #E9E71D;}
+.hlogo{padding:10px 24px 10px 28px;display:flex;align-items:center;border-right:3px solid #EB4C1B;}
+.htitle{padding:16px 28px;display:flex;flex-direction:column;justify-content:center;gap:4px;}
+.htitle .eyebrow{font-family:'Nunito',sans-serif;font-weight:800;font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:#E9E71D;opacity:0.85;}
+.htitle h1{font-family:'Nunito',sans-serif;font-weight:900;font-size:1.9rem;letter-spacing:0.04em;color:#fff;text-transform:uppercase;line-height:1;}
 .hmeta{display:flex;gap:18px;flex-wrap:wrap;margin-left:auto;padding:14px 28px;align-items:center;}
-.mf{display:flex;flex-direction:column;gap:3px;}
-.mf label{font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:white;opacity:0.75;}
-.mf span{font-size:12px;color:white;border-bottom:1px solid #CC813B;padding:2px 0;min-width:100px;display:block;}
-.stats{background:#fffdf7;border-bottom:1px solid #c8b99a;padding:8px 32px;display:flex;gap:28px;font-size:11px;color:#7A4120;flex-wrap:wrap;}
-.stat{display:flex;gap:6px;align-items:center;}.stat strong{color:#26190E;font-size:13px;}
-.dot{width:8px;height:8px;border-radius:50%;}
-.tw{overflow-x:auto;padding:20px 32px 40px;}
-table{width:100%;border-collapse:collapse;min-width:820px;background:#fffdf7;border:1px solid #c8b99a;border-radius:6px;overflow:hidden;}
+.mf{display:flex;flex-direction:column;gap:4px;}
+.mf label{font-family:'Nunito',sans-serif;font-weight:700;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.65);}
+.mf span{font-family:'Nunito',sans-serif;font-weight:600;font-size:13px;color:#fff;border-bottom:1.5px solid #CC813B;padding:4px 2px 4px 0;min-width:110px;display:block;}
+.stats{background:#F5EDDB;border-bottom:1px solid #E8DCC0;padding:10px 32px;display:flex;gap:28px;font-size:12px;font-weight:600;color:#4A3826;flex-wrap:wrap;}
+.stat{display:flex;gap:8px;align-items:center;}.stat strong{color:#1A0E05;font-weight:900;font-size:14px;}
+.dot{width:9px;height:9px;border-radius:50%;}
+.tw{overflow-x:auto;padding:24px 32px 40px;}
+table{width:100%;border-collapse:collapse;min-width:820px;background:linear-gradient(180deg,#FFFFFF 0%,#FFFBE9 100%);border:2px solid #1A0E05;border-radius:18px;overflow:hidden;box-shadow:0 0 0 3px #E9E71D,0 6px 0 rgba(26,14,5,.10),0 12px 32px rgba(26,14,5,.14);}
 thead tr{background:#26190E;}
-th{font-size:9px;letter-spacing:0.14em;text-transform:uppercase;padding:11px 10px;text-align:left;font-weight:500;white-space:nowrap;color:white;}
+th{font-family:'Nunito',sans-serif;font-weight:800;font-size:10px;letter-spacing:0.16em;text-transform:uppercase;padding:14px 12px;text-align:left;white-space:nowrap;color:#fff;}
 th.c{text-align:center;}
-tbody tr{border-bottom:1px solid #c8b99a;}tbody tr:last-child{border-bottom:none;}
-tbody tr:nth-child(even){background:#f7f2e8;}
-td{padding:7px 10px;font-size:11px;vertical-align:middle;}
-.photo-sheet-hdr{background:#26190E;border-bottom:4px solid #EB4C1B;padding:16px 32px;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
-.photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;padding:24px 32px;}
-.photo-card{border:1px solid #c8b99a;border-radius:6px;overflow:hidden;background:#fffdf7;break-inside:avoid;}
-.photo-card-label{background:#26190E;color:#E9E71D;font-size:10px;letter-spacing:0.1em;padding:5px 10px;font-family:'Barlow Condensed',sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+tbody tr{border-bottom:1px solid #E8DCC0;}tbody tr:last-child{border-bottom:none;}
+tbody tr:nth-child(even){background:rgba(245,237,219,0.50);}
+td{padding:8px 12px;font-size:13px;font-weight:500;vertical-align:middle;}
+.photo-sheet-hdr{background:#26190E;border-bottom:4px solid #EB4C1B;padding:18px 32px;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+.photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;padding:26px 32px;}
+.photo-card{border:2px solid #1A0E05;border-radius:18px;overflow:hidden;background:#fff;break-inside:avoid;box-shadow:0 0 0 3px #E9E71D;}
+.photo-card-label{background:#26190E;color:#E9E71D;font-family:'Nunito',sans-serif;font-weight:900;font-size:12px;letter-spacing:0.12em;text-transform:uppercase;padding:8px 12px;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
 .photo-card img{width:100%;height:200px;object-fit:cover;display:block;cursor:pointer;}
-.photo-card-meta{padding:6px 10px;font-size:9px;color:#7A4120;line-height:1.5;}
-.lb{display:none;position:fixed;inset:0;background:rgba(20,10,4,0.92);z-index:9999;align-items:center;justify-content:center;flex-direction:column;gap:14px;cursor:zoom-out;}
+.photo-card-meta{padding:8px 12px;font-family:'Nunito',sans-serif;font-weight:600;font-size:11px;color:#4A3826;line-height:1.5;}
+.lb{display:none;position:fixed;inset:0;background:rgba(26,14,5,0.94);z-index:9999;align-items:center;justify-content:center;flex-direction:column;gap:14px;cursor:zoom-out;}
 .lb.on{display:flex;}
-.lb img{max-width:92vw;max-height:84vh;border-radius:6px;object-fit:contain;}
-.lb-cap{color:#E9E71D;font-family:'DM Mono',monospace;font-size:12px;letter-spacing:0.08em;}
-.lb-x{position:absolute;top:18px;right:22px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:white;font-size:20px;width:38px;height:38px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:sans-serif;}
+.lb img{max-width:92vw;max-height:84vh;border-radius:14px;object-fit:contain;}
+.lb-cap{color:#E9E71D;font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;letter-spacing:0.14em;text-transform:uppercase;}
+.lb-x{position:absolute;top:18px;right:22px;background:#EB4C1B;border:2px solid #1A0E05;color:#fff;font-size:18px;width:42px;height:42px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:sans-serif;}
 @media print{
   .photo-sheet{page-break-before:always;}
   .photo-grid{grid-template-columns:repeat(2,1fr);gap:24px;}
+  .photo-card{box-shadow:none;border:1px solid #c8b99a;border-radius:6px;}
   .photo-card img{height:280px;}
 }
 </style></head><body>
 <header>
   <div class="hlogo"><img src="https://www.bratttree.com/wp-content/uploads/2025/10/badge-logo.svg" style="height:72px;width:auto;display:block;" alt="Bratt Tree"></div>
-  <div class="htitle"><h1>Tree Inventory</h1></div>
+  <div class="htitle"><span class="eyebrow">Bratt Tree Company</span><h1>Tree Inventory</h1></div>
   <div class="hmeta">
     ${date?`<div class="mf"><label>Date</label><span>${date}</span></div>`:''}
     ${arborist?`<div class="mf"><label>Arborist</label><span>${arborist}</span></div>`:''}
@@ -645,7 +609,7 @@ td{padding:7px 10px;font-size:11px;vertical-align:middle;}
 <tbody>${tableRows}</tbody>
 </table></div>
 ${photoCards?`<div class="photo-sheet">
-<div class="photo-sheet-hdr"><div style="font-family:'Barlow Condensed',sans-serif;font-size:1.3rem;font-weight:700;letter-spacing:0.12em;color:#E9E71D;text-transform:uppercase;">Tree Inventory — Photo Reference</div></div>
+<div class="photo-sheet-hdr"><div style="font-family:'Nunito',sans-serif;font-weight:900;font-size:1.4rem;letter-spacing:0.06em;color:#E9E71D;text-transform:uppercase;">Tree Inventory — Photo Reference</div></div>
 <div class="photo-grid">${photoCards}</div>
 </div>`:''}
 <div class="lb" id="lb" onclick="this.classList.remove('on')">
@@ -728,51 +692,53 @@ function printReport(){
 <html><head><meta charset="UTF-8">
 <title>Bratt Tree — ${site||'Tree Inventory'}${date?' ('+date+')':''}</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Barlow+Condensed:wght@600;700&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
   *{box-sizing:border-box;margin:0;padding:0;}
-  body{font-family:'DM Mono',monospace;font-size:10px;color:#26190E;background:white;}
+  body{font-family:'Nunito','Helvetica Neue',sans-serif;font-size:11px;color:#1A0E05;background:white;-webkit-font-smoothing:antialiased;}
 
   /* ── Header ── */
-  header{background:#26190E;display:flex;align-items:center;padding:14px 24px;gap:20px;border-bottom:4px solid #EB4C1B;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  header{background:#26190E;display:flex;align-items:center;padding:16px 24px;gap:20px;border-bottom:4px solid #EB4C1B;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
   header img{height:64px;width:auto;flex-shrink:0;}
   .h-divider{width:3px;background:#EB4C1B;align-self:stretch;border-radius:2px;flex-shrink:0;}
-  .htitle{color:#E9E71D;font-family:'Barlow Condensed',sans-serif;font-size:1.8rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;line-height:1;flex-shrink:0;}
+  .htitle-wrap{display:flex;flex-direction:column;gap:4px;flex-shrink:0;}
+  .htitle-wrap .eyebrow{font-weight:800;font-size:9px;letter-spacing:0.18em;text-transform:uppercase;color:#E9E71D;opacity:0.85;}
+  .htitle{color:#fff;font-weight:900;font-size:1.8rem;letter-spacing:0.04em;text-transform:uppercase;line-height:1;}
   .hmeta{margin-left:auto;display:grid;grid-template-columns:1fr 1fr;gap:10px 28px;}
-  .mf label{display:block;font-size:7.5px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.55);margin-bottom:2px;}
-  .mf span{display:block;font-size:11px;color:white;border-bottom:1px solid #CC813B;padding-bottom:2px;min-width:110px;}
+  .mf label{display:block;font-weight:700;font-size:8px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.6);margin-bottom:2px;}
+  .mf span{display:block;font-weight:600;font-size:12px;color:white;border-bottom:1.5px solid #CC813B;padding-bottom:3px;min-width:110px;}
   .mf span:empty::after{content:'—';color:rgba(255,255,255,0.3);}
 
   /* ── Stats bar ── */
-  .stats{background:#f7f2e8;padding:7px 24px;display:flex;gap:24px;font-size:10px;color:#7A4120;border-bottom:1px solid #c8b99a;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
-  .stat{display:flex;align-items:center;gap:6px;}
-  .stat strong{color:#26190E;font-size:12px;}
-  .dot{width:7px;height:7px;border-radius:50%;display:inline-block;}
+  .stats{background:#F5EDDB;padding:9px 24px;display:flex;gap:24px;font-size:11px;font-weight:600;color:#4A3826;border-bottom:1px solid #E8DCC0;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .stat{display:flex;align-items:center;gap:7px;}
+  .stat strong{color:#1A0E05;font-weight:900;font-size:13px;}
+  .dot{width:8px;height:8px;border-radius:50%;display:inline-block;}
 
   /* ── Table ── */
   .table-wrap{padding:16px 24px 24px;}
   table{width:100%;border-collapse:collapse;table-layout:fixed;border:1px solid #c8b99a;border-radius:6px;overflow:hidden;}
   thead{background:#26190E;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
-  th{color:white;font-size:8px;letter-spacing:0.14em;text-transform:uppercase;padding:9px 10px;text-align:left;font-weight:500;}
+  th{color:white;font-weight:800;font-size:9px;letter-spacing:0.16em;text-transform:uppercase;padding:10px 10px;text-align:left;}
   th:nth-child(1){width:9%;text-align:center;}
   th:nth-child(2){width:16%;}
   th:nth-child(3){width:8%;}
   th:nth-child(4){width:18%;}
   th:nth-child(5){width:38%;}
   th:nth-child(6){width:11%;text-align:center;}
-  td{padding:6px 10px;vertical-align:middle;border-bottom:1px solid #e8e0d0;word-break:break-word;font-size:10px;}
-  td:nth-child(1){text-align:center;color:#7A4120;font-weight:600;}
-  td:nth-child(6){text-align:center;font-weight:600;}
+  td{padding:7px 10px;vertical-align:middle;border-bottom:1px solid #e8e0d0;word-break:break-word;font-size:11px;}
+  td:nth-child(1){text-align:center;color:#7A4120;font-weight:800;}
+  td:nth-child(6){text-align:center;font-weight:700;}
   tbody tr:last-child td{border-bottom:none;}
-  tbody tr:nth-child(even){background:#f7f2e8;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  tbody tr:nth-child(even){background:#F5EDDB;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
 
   /* ── Photo section ── */
   .photo-section{margin-top:0;}
-  .photo-header{background:#26190E;color:#E9E71D;padding:12px 24px;font-family:'Barlow Condensed',sans-serif;font-size:1.3rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;border-bottom:4px solid #EB4C1B;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
-  .photo-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;padding:20px 24px;}
+  .photo-header{background:#26190E;color:#E9E71D;padding:14px 24px;font-weight:900;font-size:1.3rem;letter-spacing:0.06em;text-transform:uppercase;border-bottom:4px solid #EB4C1B;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .photo-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;padding:22px 24px;}
   .photo-card{border:1px solid #c8b99a;border-radius:6px;overflow:hidden;break-inside:avoid;}
-  .photo-card-label{background:#26190E;color:#E9E71D;font-size:10px;letter-spacing:0.1em;padding:7px 12px;font-family:'Barlow Condensed',sans-serif;font-weight:700;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .photo-card-label{background:#26190E;color:#E9E71D;font-weight:900;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;padding:8px 12px;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
   .photo-card img{width:100%;height:260px;object-fit:cover;display:block;}
-  .photo-card-meta{padding:7px 12px;font-size:9px;color:#7A4120;}
+  .photo-card-meta{padding:8px 12px;font-weight:600;font-size:10px;color:#4A3826;}
 
   @page{size:portrait;margin:0.8cm;}
   @media print{.photo-section{page-break-before:always;}}
@@ -781,7 +747,10 @@ function printReport(){
 <header>
   <img src="https://www.bratttree.com/wp-content/uploads/2025/10/badge-logo.svg" alt="Bratt Tree">
   <div class="h-divider"></div>
-  <div class="htitle">Tree Inventory</div>
+  <div class="htitle-wrap">
+    <span class="eyebrow">Bratt Tree Company</span>
+    <div class="htitle">Tree Inventory</div>
+  </div>
   <div class="hmeta">
     <div class="mf"><label>Date</label><span>${date}</span></div>
     <div class="mf"><label>Arborist</label><span>${arborist}</span></div>
@@ -882,10 +851,6 @@ function restoreFromSave(){
     if(!data||!data.rows||data.rows.length===0)return false;
 
     const savedAt=new Date(data.savedAt);
-    const mins=Math.round((new Date()-savedAt)/60000);
-    const timeStr=mins<1?'less than a minute ago':mins===1?'1 minute ago':`${mins} minutes ago`;
-
-    if(!confirm(`Restore saved session from ${timeStr}?\n\nClick OK to restore, Cancel to start fresh.`))return false;
 
     // Restore header fields
     document.getElementById('inv-date').value=data.date||'';
@@ -921,12 +886,30 @@ function attachChangeListeners(){
   });
 }
 
+function seedBlankRows(n){
+  const body=document.getElementById('tree-body');
+  body.innerHTML='';
+  rowCounter=0;
+  for(let i=1;i<=n;i++){body.appendChild(createRow({num:i}));}
+  updateStats();
+}
+
+function startNewInventory(){
+  if(!confirm('Start a new inventory? This clears the current form and saved progress.'))return;
+  ['inv-date','inv-arborist','inv-site','inv-weather'].forEach(id=>{document.getElementById(id).value='';});
+  Object.keys(photoStore).forEach(k=>delete photoStore[k]);
+  try{localStorage.removeItem(SAVE_KEY);}catch(e){}
+  lastSaved=null;
+  seedBlankRows(DEFAULT_BLANK_ROWS);
+  document.getElementById('save-dot').className='save-dot';
+  document.getElementById('save-label').textContent='Not saved yet';
+}
+
 // Init
 const tbody=document.getElementById('tree-body');
 const restored=restoreFromSave();
 if(!restored){
-  existingData.forEach(d=>tbody.appendChild(createRow(d)));
-  updateStats();
+  seedBlankRows(DEFAULT_BLANK_ROWS);
 }
 attachChangeListeners();
 saveNow();

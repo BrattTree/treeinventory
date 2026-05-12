@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><title>Cards</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<link rel="stylesheet" href="preview.css">
+<style>
+body { background: var(--bt-bark); }
+.card { background: var(--bt-bark); }
+.row { display:grid; grid-template-columns: 1fr 1fr 1fr; gap:18px; padding: 8px 0; }
+.bt-card {
+  background: linear-gradient(180deg, #FFFFFF 0%, #FBF5C8 100%);
+  border: 3px solid var(--bt-lime);
+  border-radius: 18px;
+  padding: 20px 22px;
+}
+.bt-card .title {
+  font-family: "Nunito", sans-serif;
+  font-weight: 900;
+  font-size: 17px;
+  line-height: 1.2;
+  color: #3D2B14;
+  margin: 0 0 10px;
+}
+.bt-card .body {
+  font-family: "Nunito", sans-serif;
+  font-weight: 400;
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: #4A3826;
+  margin: 0;
+}
+</style></head>
+<body><div class="card">
+  <div class="row">
+    <div class="bt-card">
+      <div class="title">Satisfaction Guaranteed</div>
+      <p class="body">Your trees deserve the best, and we deliver it every time. We take pride in work that meets your standards and ours.</p>
+    </div>
+    <div class="bt-card">
+      <div class="title">Free Consultations</div>
+      <p class="body">Every great result begins with a conversation. We assess your trees, provide expert advice, and outline clear, no-pressure solutions.</p>
+    </div>
+    <div class="bt-card">
+      <div class="title">Upfront Pricing</div>
+      <p class="body">Honesty guides everything we do. You will always know the cost and scope of work before we begin.</p>
+    </div>
+  </div>
+</div></body></html>

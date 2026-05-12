@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><title>Buttons</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<link rel="stylesheet" href="preview.css">
+<style>
+.btn {
+  font-family: var(--font-body); font-weight: 800; letter-spacing:.06em;
+  text-transform: uppercase; font-size: 14px;
+  padding: 14px 26px; border-radius: 999px;
+  border: none; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 8px;
+  transition: background var(--t-fast) var(--ease-out), color var(--t-fast);
+  text-decoration: none;
+}
+.btn-primary { background: var(--bt-orange); color:#fff; }
+.btn-primary:hover { background: var(--accent-hover); }
+.btn-dark { background: var(--bt-bark); color: var(--bt-cream); }
+.btn-dark:hover { background: #1A0E05; }
+.btn-ghost { background: transparent; color: var(--bt-ink); box-shadow: inset 0 0 0 2px var(--bt-ink); }
+.btn-ghost:hover { background: var(--bt-ink); color: var(--bt-cream); box-shadow:none; }
+.btn-link { background: transparent; padding: 0; color: var(--bt-orange); }
+.btn-link:hover { color: var(--accent-hover); }
+.row { display:flex; gap:12px; flex-wrap:wrap; align-items:center; }
+</style></head>
+<body><div class="card">
+  <div class="row">
+    <button class="btn btn-primary">Get a free estimate</button>
+    <button class="btn btn-dark">Call (612) 555-0142</button>
+    <button class="btn btn-ghost">Our services</button>
+    <button class="btn btn-link">Learn more →</button>
+  </div>
+  <div class="row" style="margin-top:14px; gap:18px;">
+    <span class="mono">Primary · Dark · Ghost · Link</span>
+    <span class="mono">Round (r-pill) · flat · no border</span>
+  </div>
+</div></body></html>

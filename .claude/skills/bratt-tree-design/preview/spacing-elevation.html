@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><title>Elevation</title>
+<link rel="stylesheet" href="../colors_and_type.css">
+<link rel="stylesheet" href="preview.css">
+<style>
+body { background: var(--bt-cream); }
+.row { display:flex; gap:24px; align-items:flex-start; padding:8px 0 28px; }
+.cell { display:flex; flex-direction:column; align-items:center; gap:8px; flex:1; }
+.box { width:140px; height:80px; background:#fff; border:2px solid var(--bt-ink); border-radius:14px; }
+.label { font-weight:800; font-size:11px; letter-spacing:.06em; text-transform:uppercase; }
+.cap { font-family:var(--font-mono); font-size:10px; color:var(--fg-3); text-align:center; }
+</style></head>
+<body><div class="card">
+  <div class="row">
+    <div class="cell"><div class="box" style="box-shadow: var(--sh-1)"></div><div class="label">--sh-1</div><div class="cap">subtle paper lift</div></div>
+    <div class="cell"><div class="box" style="box-shadow: var(--sh-2)"></div><div class="label">--sh-2 · card</div><div class="cap">default card</div></div>
+    <div class="cell"><div class="box" style="box-shadow: var(--sh-3)"></div><div class="label">--sh-3 · modal</div><div class="cap">popovers, sheets</div></div>
+    <div class="cell"><div class="box" style="box-shadow: var(--sh-badge)"></div><div class="label">--sh-badge</div><div class="cap">stamped-on, die-cut</div></div>
+  </div>
+</div></body></html>
