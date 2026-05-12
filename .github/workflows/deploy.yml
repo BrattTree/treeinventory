@@ -1,0 +1,54 @@
+name: Deploy to GitHub Pages
+
+# Builds index.html with the PUBLISH_TOKEN secret injected, then deploys
+# the result to GitHub Pages. The token never appears in source.
+
+on:
+  push:
+    branches:
+      - main
+      - claude/web-interface-customers-FQPU6
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Inject publish token into index.html
+        env:
+          PUBLISH_TOKEN: ${{ secrets.PUBLISH_TOKEN }}
+        run: |
+          if [ -z "$PUBLISH_TOKEN" ]; then
+            echo "::error::PUBLISH_TOKEN secret is not set. Add it under Settings → Secrets and variables → Actions."
+            exit 1
+          fi
+          mkdir -p _site
+          python3 - <<'PY'
+          import os, pathlib
+          html = pathlib.Path('index.html').read_text(encoding='utf-8')
+          if '__BT_PUBLISH_TOKEN__' not in html:
+              raise SystemExit('index.html is missing the __BT_PUBLISH_TOKEN__ placeholder')
+          html = html.replace('__BT_PUBLISH_TOKEN__', os.environ['PUBLISH_TOKEN'])
+          pathlib.Path('_site/index.html').write_text(html, encoding='utf-8')
+          PY
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - id: deployment
+        uses: actions/deploy-pages@v4

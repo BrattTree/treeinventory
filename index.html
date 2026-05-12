@@ -78,6 +78,10 @@
   .btn-primary{background:var(--bt-orange);color:#fff;}
   .btn-primary:hover{background:var(--accent-hover);}
   .btn-primary:active{background:var(--accent-press);}
+  .btn-publish{background:var(--bt-orange);color:#fff;}
+  .btn-publish:hover{background:var(--accent-hover);}
+  .btn-publish:active{background:var(--accent-press);}
+  .btn-publish[disabled]{background:rgba(255,255,255,0.18);color:rgba(255,255,255,0.55);cursor:not-allowed;}
   .btn-export{background:var(--bt-lime);color:var(--bt-ink);}
   .btn-export:hover{background:#d6d419;}
   .btn-zip{background:var(--bt-bark);color:var(--bt-cream);}
@@ -177,6 +181,39 @@
   .export-btn-cancel:hover{background:var(--bt-bone);}
   .export-actions button small{display:block;font-size:11px;opacity:0.78;margin-top:4px;letter-spacing:0;text-transform:none;font-weight:600;}
 
+  /* ── Publish overlay ────────────────────────────────────── */
+  #publish-overlay{display:none;position:fixed;inset:0;background:rgba(26,14,5,0.65);z-index:2000;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+  #publish-overlay.active{display:flex;}
+  .publish-box{background:#fff;border:1px solid var(--border);border-radius:16px;padding:32px 36px;max-width:520px;width:90%;box-shadow:0 24px 60px rgba(26,14,5,.30);}
+  .publish-box h2{font-family:var(--font-headline);font-weight:900;font-size:1.35rem;letter-spacing:0.02em;text-transform:uppercase;color:var(--bt-ink);margin-bottom:8px;}
+  .publish-box p{font-family:var(--font-body);font-size:13px;color:var(--fg-2);margin-bottom:18px;line-height:1.55;}
+  .publish-box .pub-state{display:none;}
+  .publish-box.s-idle .pub-state.s-idle,
+  .publish-box.s-up   .pub-state.s-up,
+  .publish-box.s-done .pub-state.s-done,
+  .publish-box.s-err  .pub-state.s-err{display:block;}
+  .pub-actions{display:flex;flex-direction:column;gap:10px;}
+  .pub-actions button{font-family:var(--font-body);font-weight:800;font-size:13px;letter-spacing:0.04em;text-transform:uppercase;padding:14px 18px;border-radius:12px;cursor:pointer;border:none;text-align:left;transition:background var(--t-fast),color var(--t-fast);}
+  .pub-btn-primary{background:var(--bt-orange);color:#fff;}
+  .pub-btn-primary:hover{background:var(--accent-hover);}
+  .pub-btn-secondary{background:transparent;color:var(--fg-2);box-shadow:inset 0 0 0 1.5px var(--border);}
+  .pub-btn-secondary:hover{background:var(--bt-bone);}
+  .pub-actions button small{display:block;font-size:11px;opacity:0.78;margin-top:4px;letter-spacing:0;text-transform:none;font-weight:600;}
+  .pub-spinner{width:42px;height:42px;border:4px solid var(--bt-paper-edge);border-top-color:var(--bt-orange);border-radius:50%;animation:pubspin 800ms linear infinite;margin:8px auto 16px;}
+  @keyframes pubspin{to{transform:rotate(360deg);}}
+  .pub-progress-label{text-align:center;font-family:var(--font-body);font-weight:700;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;color:var(--fg-2);}
+  .pub-link-row{display:flex;gap:8px;align-items:stretch;margin-bottom:14px;}
+  .pub-link-input{flex:1;font-family:'Menlo','Consolas',monospace;font-size:12px;padding:11px 12px;border:1.5px solid var(--border);border-radius:10px;background:var(--bt-bone);color:var(--bt-ink);outline:none;min-width:0;}
+  .pub-link-input:focus{border-color:var(--bt-orange);}
+  .pub-icon-btn{background:var(--bt-bark);color:var(--bt-cream);border:none;border-radius:10px;padding:0 14px;font-family:var(--font-body);font-weight:800;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;transition:background var(--t-fast);white-space:nowrap;}
+  .pub-icon-btn:hover{background:var(--bt-bark-deep);}
+  .pub-icon-btn.copied{background:var(--success);}
+  .pub-qr-wrap{display:flex;justify-content:center;margin:6px 0 14px;min-height:160px;align-items:center;}
+  .pub-qr-wrap img{border:8px solid #fff;box-shadow:var(--sh-1);border-radius:6px;display:block;}
+  .pub-status-note{font-family:var(--font-body);font-size:11px;color:var(--fg-3);text-align:center;margin-bottom:14px;letter-spacing:0.04em;}
+  .pub-status-note.live{color:var(--success);font-weight:800;text-transform:uppercase;letter-spacing:0.08em;}
+  .pub-err{background:#fff3ef;border:1px solid #f5c1b0;color:#7a2a14;border-radius:10px;padding:12px 14px;font-size:13px;line-height:1.5;margin-bottom:16px;}
+
   /* ── Photo sheet (print only) ───────────────────────────── */
   .photo-sheet{display:none;}
   .photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;padding:24px 32px;}
@@ -251,6 +288,7 @@
 
 <div class="toolbar">
   <button class="btn-primary" onclick="addRow()">＋ Add Tree</button>
+  <button class="btn-publish" id="btn-publish" onclick="showPublish()">↑ Publish</button>
   <button class="btn-export" onclick="showExport()">↓ Download / Print</button>
   <button class="btn-zip" onclick="downloadImages()">↓ Download Images</button>
   <button class="btn-ghost" onclick="exportCSV()">↓ Export CSV</button>
@@ -319,6 +357,55 @@
       </button>
       <button class="export-btn-cancel" onclick="hideExport()">Cancel</button>
     </div>
+  </div>
+</div>
+
+<!-- Publish overlay -->
+<div id="publish-overlay">
+  <div class="publish-box s-idle" id="publish-box">
+
+    <div class="pub-state s-idle">
+      <h2 id="pub-idle-title">Publish to customer</h2>
+      <p id="pub-idle-msg">Uploads this inventory as a single-page report and gives you a shareable link. Anyone with the link can view the report and photos — there is no password.</p>
+      <div class="pub-actions">
+        <button class="pub-btn-primary" onclick="doPublish()">
+          <span id="pub-idle-btn-label">↑ Publish now</span>
+          <small>Creates a public web link you can text or email.</small>
+        </button>
+        <button class="pub-btn-secondary" onclick="hidePublish()">Cancel</button>
+      </div>
+    </div>
+
+    <div class="pub-state s-up">
+      <h2>Publishing…</h2>
+      <div class="pub-spinner"></div>
+      <div class="pub-progress-label" id="pub-progress-label">Building report</div>
+    </div>
+
+    <div class="pub-state s-done">
+      <h2>Published</h2>
+      <p>Send this link to your customer. They'll see the full inventory with photos.</p>
+      <div class="pub-link-row">
+        <input type="text" class="pub-link-input" id="pub-link" readonly>
+        <button class="pub-icon-btn" id="pub-copy-btn" onclick="copyPublishedLink()">Copy</button>
+      </div>
+      <div class="pub-qr-wrap" id="pub-qr-wrap"></div>
+      <div class="pub-status-note" id="pub-status-note">Link will be live in about 30 seconds…</div>
+      <div class="pub-actions">
+        <button class="pub-btn-primary" onclick="openPublished()">Open link in new tab</button>
+        <button class="pub-btn-secondary" onclick="hidePublish()">Done</button>
+      </div>
+    </div>
+
+    <div class="pub-state s-err">
+      <h2>Couldn't publish</h2>
+      <div class="pub-err" id="pub-err-msg"></div>
+      <div class="pub-actions">
+        <button class="pub-btn-primary" onclick="doPublish()">↻ Try again</button>
+        <button class="pub-btn-secondary" onclick="hidePublish()">Cancel</button>
+      </div>
+    </div>
+
   </div>
 </div>
 
@@ -469,6 +556,8 @@ function clearAll(){
     document.getElementById('tree-body').innerHTML='';
     Object.keys(photoStore).forEach(k=>delete photoStore[k]);
     rowCounter=0;updateStats();
+    setPublishedRecord(null);
+    refreshPublishButton();
   }
 }
 function exportCSV(){
@@ -1021,10 +1110,12 @@ function startNewInventory(){
   ['inv-date','inv-arborist','inv-site','inv-weather'].forEach(id=>{document.getElementById(id).value='';});
   Object.keys(photoStore).forEach(k=>delete photoStore[k]);
   try{localStorage.removeItem(SAVE_KEY);}catch(e){}
+  setPublishedRecord(null);
   lastSaved=null;
   seedBlankRows(DEFAULT_BLANK_ROWS);
   document.getElementById('save-dot').className='save-dot';
   document.getElementById('save-label').textContent='Not saved yet';
+  refreshPublishButton();
 }
 
 // Init
@@ -1035,6 +1126,223 @@ if(!restored){
 }
 attachChangeListeners();
 saveNow();
+
+// ── Publish to GitHub Pages (one-click customer link) ──────
+// PUBLISH_TOKEN is replaced at deploy time by .github/workflows/deploy.yml.
+// In source it's the literal placeholder, which publishConfigured() detects.
+const PUBLISH_TOKEN='__BT_PUBLISH_TOKEN__';
+const REPORTS_REPO='BrattTree/treeinventory-reports';
+const REPORTS_PAGES_BASE='https://bratttree.github.io/treeinventory-reports';
+const PUB_KEY=SAVE_KEY+'_pub';
+
+function publishConfigured(){
+  return PUBLISH_TOKEN && !PUBLISH_TOKEN.startsWith('__') && PUBLISH_TOKEN.length>20;
+}
+
+function getPublishedRecord(){
+  try{const raw=localStorage.getItem(PUB_KEY);return raw?JSON.parse(raw):null;}
+  catch(e){return null;}
+}
+function setPublishedRecord(rec){
+  try{
+    if(rec)localStorage.setItem(PUB_KEY,JSON.stringify(rec));
+    else localStorage.removeItem(PUB_KEY);
+  }catch(e){}
+}
+
+function relativeTime(iso){
+  const diff=(new Date()-new Date(iso))/1000;
+  if(diff<60)return'just now';
+  if(diff<3600)return Math.round(diff/60)+' min ago';
+  if(diff<86400)return Math.round(diff/3600)+' hr ago';
+  return Math.round(diff/86400)+' days ago';
+}
+
+function refreshPublishButton(){
+  const btn=document.getElementById('btn-publish');
+  if(!btn)return;
+  if(!publishConfigured()){
+    btn.disabled=true;
+    btn.title='Publish is only available on the live (bratttree.github.io) version of this tool.';
+    btn.textContent='↑ Publish';
+    return;
+  }
+  btn.disabled=false;
+  const prev=getPublishedRecord();
+  btn.textContent=prev?'↑ Republish':'↑ Publish';
+  btn.title=prev?('Last published '+relativeTime(prev.publishedAt)):'Upload this inventory and get a shareable customer link.';
+}
+
+function setPublishState(s){
+  const box=document.getElementById('publish-box');
+  box.classList.remove('s-idle','s-up','s-done','s-err');
+  box.classList.add('s-'+s);
+}
+
+function showPublish(){
+  if(!publishConfigured()){
+    alert('Publish is only available on the live version of this tool at bratttree.github.io. A local or downloaded copy can’t publish.');
+    return;
+  }
+  const prev=getPublishedRecord();
+  document.getElementById('pub-idle-title').textContent=prev?'Republish to customer':'Publish to customer';
+  document.getElementById('pub-idle-msg').textContent=prev
+    ?'This inventory was already published '+relativeTime(prev.publishedAt)+'. Republishing replaces the existing report at the same link.'
+    :'Uploads this inventory as a single-page report and gives you a shareable link. Anyone with the link can view the report and photos — there is no password.';
+  document.getElementById('pub-idle-btn-label').textContent=prev?'↑ Republish now':'↑ Publish now';
+  setPublishState('idle');
+  document.getElementById('publish-overlay').classList.add('active');
+}
+
+function hidePublish(){
+  document.getElementById('publish-overlay').classList.remove('active');
+  if(pubPollTimer){clearTimeout(pubPollTimer);pubPollTimer=null;}
+}
+
+function utf8ToBase64(str){
+  const bytes=new TextEncoder().encode(str);
+  let binary='';
+  const chunk=0x8000;
+  for(let i=0;i<bytes.length;i+=chunk){
+    binary+=String.fromCharCode.apply(null,bytes.subarray(i,i+chunk));
+  }
+  return btoa(binary);
+}
+
+function randomReportId(){
+  const bytes=new Uint8Array(12);crypto.getRandomValues(bytes);
+  return Array.from(bytes,b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+let pubPollTimer=null;
+
+async function doPublish(){
+  setPublishState('up');
+  const progressLabel=document.getElementById('pub-progress-label');
+  progressLabel.textContent='Building report';
+
+  try{
+    const html=serializeToHTML();
+    const sizeMB=(html.length/1024/1024).toFixed(1);
+    if(html.length>40*1024*1024){
+      throw new Error('Report is '+sizeMB+' MB — too large to publish in one piece. Remove a few photos and try again.');
+    }
+    progressLabel.textContent='Uploading ('+sizeMB+' MB)';
+
+    const prev=getPublishedRecord();
+    const path=prev?prev.path:('r/'+randomReportId()+'.html');
+    const site=document.getElementById('inv-site').value.trim()||'inventory';
+    const date=document.getElementById('inv-date').value.trim();
+    const message=(prev?'Update ':'Publish ')+site+(date?' ('+date+')':'');
+
+    const body={message:message,content:utf8ToBase64(html),branch:'main'};
+    if(prev&&prev.sha)body.sha=prev.sha;
+
+    const res=await fetch('https://api.github.com/repos/'+REPORTS_REPO+'/contents/'+path,{
+      method:'PUT',
+      headers:{
+        'Authorization':'Bearer '+PUBLISH_TOKEN,
+        'Accept':'application/vnd.github+json',
+        'Content-Type':'application/json'
+      },
+      body:JSON.stringify(body)
+    });
+
+    if(!res.ok){
+      let detail='';
+      try{detail=(await res.json()).message||'';}catch(e){}
+      if(res.status===401||res.status===403){
+        throw new Error('GitHub rejected the publish key ('+res.status+'). It may have expired or been revoked. An admin needs to generate a new fine-grained token and update the PUBLISH_TOKEN secret.');
+      }
+      if(res.status===409||res.status===422){
+        // Stale SHA — fetch latest and retry once
+        const probe=await fetch('https://api.github.com/repos/'+REPORTS_REPO+'/contents/'+path,{
+          headers:{'Authorization':'Bearer '+PUBLISH_TOKEN,'Accept':'application/vnd.github+json'}
+        });
+        if(probe.ok){
+          const meta=await probe.json();
+          body.sha=meta.sha;
+          const retry=await fetch('https://api.github.com/repos/'+REPORTS_REPO+'/contents/'+path,{
+            method:'PUT',
+            headers:{'Authorization':'Bearer '+PUBLISH_TOKEN,'Accept':'application/vnd.github+json','Content-Type':'application/json'},
+            body:JSON.stringify(body)
+          });
+          if(retry.ok){
+            const rdata=await retry.json();
+            return finishPublish(REPORTS_PAGES_BASE+'/'+path,path,rdata.content.sha);
+          }
+        }
+      }
+      throw new Error('GitHub said: '+(detail||(res.status+' '+res.statusText)));
+    }
+
+    const data=await res.json();
+    finishPublish(REPORTS_PAGES_BASE+'/'+path,path,data.content.sha);
+  }catch(err){
+    document.getElementById('pub-err-msg').textContent=err.message||String(err);
+    setPublishState('err');
+  }
+}
+
+function finishPublish(url,path,sha){
+  setPublishedRecord({url:url,path:path,sha:sha,publishedAt:new Date().toISOString()});
+  document.getElementById('pub-link').value=url;
+  renderQR(url);
+  const note=document.getElementById('pub-status-note');
+  note.textContent='Link will be live in about 30 seconds…';
+  note.classList.remove('live');
+  const cb=document.getElementById('pub-copy-btn');
+  cb.textContent='Copy';cb.classList.remove('copied');
+  setPublishState('done');
+  refreshPublishButton();
+  pollReady(url,0);
+}
+
+function pollReady(url,attempt){
+  if(attempt>=30)return; // ~3 min cap
+  pubPollTimer=setTimeout(async()=>{
+    try{
+      const r=await fetch(url,{method:'HEAD',cache:'no-store'});
+      if(r.ok){
+        const n=document.getElementById('pub-status-note');
+        n.textContent='Link is live';
+        n.classList.add('live');
+        return;
+      }
+    }catch(e){/* retry */}
+    pollReady(url,attempt+1);
+  },6000);
+}
+
+function copyPublishedLink(){
+  const inp=document.getElementById('pub-link');
+  inp.select();inp.setSelectionRange(0,9999);
+  const btn=document.getElementById('pub-copy-btn');
+  const done=()=>{btn.textContent='Copied';btn.classList.add('copied');setTimeout(()=>{btn.textContent='Copy';btn.classList.remove('copied');},2200);};
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(inp.value).then(done,()=>{try{document.execCommand('copy');done();}catch(e){}});
+  }else{
+    try{document.execCommand('copy');done();}catch(e){}
+  }
+}
+
+function openPublished(){
+  const url=document.getElementById('pub-link').value;
+  if(url)window.open(url,'_blank','noopener');
+}
+
+function renderQR(text){
+  const wrap=document.getElementById('pub-qr-wrap');
+  wrap.innerHTML='';
+  loadScript('https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js',function(){
+    try{
+      const qr=qrcode(0,'M');qr.addData(text);qr.make();
+      wrap.innerHTML=qr.createImgTag(5,8);
+    }catch(e){wrap.innerHTML='';}
+  });
+}
+
+refreshPublishButton();
 
 // ── ZIP image download using JSZip ──────────────────────────
 function loadScript(src,cb){
