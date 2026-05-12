@@ -1,0 +1,972 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bratt Tree — Tree Inventory</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Barlow+Condensed:wght@400;600;700&display=swap');
+  :root {
+    --brown-dark:#26190E;--brown-mid:#7A4120;--brown-tan:#CC813B;
+    --orange:#EB4C1B;--orange-light:#EC511B;--yellow:#E9E71D;--yellow-light:#f5f490;
+    --cream:#fffdf7;--parchment:#f7f2e8;--border:#c8b99a;--shadow:rgba(38,25,14,0.15);
+    --ok:#448629;--warn:#A35817;--danger:#b84040;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{background:var(--parchment);font-family:'DM Mono',monospace;color:var(--brown-dark);min-height:100vh;}
+
+  header{background:var(--brown-dark);padding:0;display:flex;align-items:stretch;min-height:90px;border-bottom:4px solid var(--orange);}
+  .header-logo{background:var(--brown-dark);padding:10px 20px 10px 28px;display:flex;align-items:center;flex-shrink:0;border-right:3px solid var(--orange);}
+  .header-logo img{height:72px;width:auto;display:block;}
+  .header-title{padding:14px 24px;display:flex;flex-direction:column;justify-content:center;gap:2px;}
+  .header-title h1{font-family:'Barlow Condensed',sans-serif;font-size:2rem;font-weight:700;letter-spacing:0.12em;color:var(--yellow);line-height:1;text-transform:uppercase;}
+  .header-meta{display:flex;gap:18px;flex-wrap:wrap;margin-left:auto;padding:14px 28px 14px 0;align-items:center;}
+  .meta-field{display:flex;flex-direction:column;gap:3px;}
+  .meta-field label{font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:white;opacity:0.75;}
+  .meta-field input{background:transparent;border:none;border-bottom:1px solid var(--brown-tan);color:white;font-family:'DM Mono',monospace;font-size:12px;padding:2px 0;width:130px;outline:none;}
+  .meta-field input:focus{border-bottom-color:var(--yellow);}
+  .meta-field input::placeholder{color:rgba(255,255,255,0.3);}
+
+  .toolbar{background:var(--brown-mid);padding:9px 32px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;border-bottom:2px solid var(--brown-dark);}
+  .save-status{font-size:10px;color:var(--yellow-light);opacity:0.75;margin-left:auto;display:flex;align-items:center;gap:6px;}
+  .save-dot{width:7px;height:7px;border-radius:50%;background:#448629;flex-shrink:0;}
+  .save-dot.unsaved{background:var(--orange);}
+  .toolbar button{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;padding:6px 16px;border-radius:3px;cursor:pointer;transition:all 0.15s;border:1px solid rgba(255,255,255,0.2);}
+  .btn-primary{background:var(--orange);color:white;border-color:var(--orange);}
+  .btn-primary:hover{background:#d44318;}
+  .btn-ghost{background:transparent;color:var(--yellow-light);}
+  .btn-ghost:hover{background:rgba(255,255,255,0.1);}
+  .btn-danger{background:transparent;color:#e8a0a0;border-color:rgba(232,160,160,0.3);}
+  .btn-danger:hover{background:rgba(184,64,64,0.3);}
+  .btn-export{background:var(--yellow);color:var(--brown-dark);border-color:var(--yellow);font-weight:500;}
+  .btn-export:hover{background:var(--yellow-light);}
+  .btn-zip{background:#2a5298;color:#d4e8c2;border-color:rgba(100,160,255,0.4);}
+  .btn-zip:hover{background:#3563b8;}
+
+  .stats-bar{background:var(--cream);border-bottom:1px solid var(--border);padding:8px 32px;display:flex;gap:28px;font-size:11px;color:var(--brown-mid);flex-wrap:wrap;}
+  .stat{display:flex;gap:6px;align-items:center;}
+  .stat strong{color:var(--brown-dark);font-size:13px;}
+  .dot{width:8px;height:8px;border-radius:50%;}
+  .dot-ok{background:var(--ok);}.dot-warn{background:var(--warn);}.dot-danger{background:var(--danger);}
+
+  .table-wrap{overflow-x:auto;padding:20px 32px 60px;}
+  table{width:100%;border-collapse:collapse;min-width:900px;background:var(--cream);border:1px solid var(--border);border-radius:6px;overflow:hidden;box-shadow:0 2px 14px var(--shadow);}
+  thead tr{background:var(--brown-dark);}
+  th{font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.14em;text-transform:uppercase;padding:11px 10px;text-align:left;white-space:nowrap;font-weight:500;color:white;}
+  th.center{text-align:center;}
+  tbody tr{border-bottom:1px solid var(--border);transition:background 0.1s;}
+  tbody tr:hover{background:#f0ebe0;}
+  tbody tr:last-child{border-bottom:none;}
+  td{padding:7px 8px;vertical-align:middle;}
+  td.tree-num{font-size:11px;color:var(--brown-mid);font-weight:500;text-align:center;min-width:36px;}
+
+  td input[type="text"],td select,td textarea{font-family:'DM Mono',monospace;font-size:11px;color:var(--brown-dark);background:transparent;border:1px solid transparent;border-radius:3px;padding:4px 6px;width:100%;outline:none;transition:border-color 0.15s,background 0.15s;}
+  td input[type="text"]:focus,td select:focus,td textarea:focus{border-color:var(--orange);background:white;}
+  td input[type="text"]:hover,td select:hover{border-color:var(--border);background:rgba(255,255,255,0.6);}
+  td select{cursor:pointer;}
+  select.cond-fair{color:var(--ok);}
+  select.cond-poor{color:var(--warn);}
+  select.cond-dead,select.cond-defective{color:var(--danger);}
+  td.setback{text-align:center;}
+  td.setback select{width:auto;}
+  td.photo-cell{text-align:center;min-width:80px;}
+
+  .photo-upload-btn{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border:1.5px dashed var(--border);border-radius:4px;cursor:pointer;color:var(--border);font-size:18px;transition:all 0.15s;background:transparent;}
+  .photo-upload-btn:hover{border-color:var(--orange);color:var(--orange);}
+  .photo-thumb-wrap{position:relative;display:inline-block;cursor:pointer;}
+  .photo-thumb{width:40px;height:40px;object-fit:cover;border-radius:4px;border:1.5px solid var(--orange);display:block;transition:transform 0.15s;}
+  .photo-thumb:hover{transform:scale(1.12);}
+  .photo-remove{position:absolute;top:-5px;right:-5px;width:16px;height:16px;background:var(--danger);color:white;border:none;border-radius:50%;font-size:9px;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity 0.15s;}
+  .photo-thumb-wrap:hover .photo-remove{opacity:1;}
+  input[type="file"]{display:none;}
+
+  .delete-row{background:transparent;border:none;color:var(--border);cursor:pointer;font-size:14px;padding:4px;border-radius:3px;transition:color 0.15s;line-height:1;}
+  .delete-row:hover{color:var(--danger);}
+  td textarea{resize:none;height:36px;min-width:120px;font-size:10px;line-height:1.4;}
+
+  tfoot tr td{padding:12px 10px;background:var(--parchment);}
+
+  /* Lightbox */
+  .lightbox{display:none;position:fixed;inset:0;background:rgba(20,10,4,0.92);z-index:1000;align-items:center;justify-content:center;flex-direction:column;gap:16px;backdrop-filter:blur(4px);}
+  .lightbox.active{display:flex;}
+  .lightbox img{max-width:90vw;max-height:82vh;border-radius:6px;object-fit:contain;}
+  .lightbox-caption{color:var(--yellow);font-family:'DM Mono',monospace;font-size:12px;letter-spacing:0.1em;}
+  .lightbox-close{position:absolute;top:20px;right:24px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:white;font-size:20px;width:38px;height:38px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:sans-serif;}
+  .lightbox-close:hover{background:rgba(235,76,27,0.5);}
+
+  /* Export overlay */
+  #export-overlay{display:none;position:fixed;inset:0;background:rgba(20,10,4,0.75);z-index:2000;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+  #export-overlay.active{display:flex;}
+  .export-box{background:var(--cream);border:3px solid var(--orange);border-radius:8px;padding:30px 34px;max-width:420px;width:90%;}
+  .export-box h2{font-family:'Barlow Condensed',sans-serif;font-size:1.3rem;letter-spacing:0.04em;text-transform:uppercase;color:var(--brown-dark);margin-bottom:6px;}
+  .export-box p{font-size:11px;color:var(--brown-mid);margin-bottom:20px;line-height:1.6;}
+  .export-actions{display:flex;flex-direction:column;gap:10px;}
+  .export-actions button{font-family:'DM Mono',monospace;font-size:11px;letter-spacing:0.06em;text-transform:uppercase;padding:10px 16px;border-radius:4px;cursor:pointer;border:1px solid var(--border);text-align:left;}
+  .export-btn-html{background:var(--orange);color:white;border-color:var(--orange);}
+  .export-btn-html:hover{background:#d44318;}
+  .export-btn-print{background:var(--brown-dark);color:var(--yellow);border-color:var(--brown-dark);}
+  .export-btn-print:hover{background:var(--brown-mid);}
+  .export-btn-cancel{background:transparent;color:var(--brown-mid);}
+  .export-btn-cancel:hover{background:var(--parchment);}
+  .export-actions button small{display:block;font-size:9px;opacity:0.7;margin-top:2px;letter-spacing:0.04em;text-transform:none;}
+
+  /* Photo sheet */
+  .photo-sheet{display:none;}
+  .photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;padding:24px 32px;}
+  .photo-card{border:1px solid var(--border);border-radius:6px;overflow:hidden;background:var(--cream);break-inside:avoid;}
+  .photo-card-label{background:var(--brown-dark);color:var(--yellow);font-size:10px;letter-spacing:0.1em;padding:5px 10px;font-family:'Barlow Condensed',sans-serif;}
+  .photo-card img{width:100%;height:160px;object-fit:cover;display:block;cursor:pointer;}
+  .photo-card-meta{padding:6px 10px;font-size:9px;color:var(--brown-mid);line-height:1.5;}
+
+  /* Exported HTML lightbox */
+  .lb{display:none;position:fixed;inset:0;background:rgba(20,10,4,0.92);z-index:9999;align-items:center;justify-content:center;flex-direction:column;gap:14px;cursor:zoom-out;}
+  .lb.on{display:flex;}
+  .lb img{max-width:92vw;max-height:84vh;border-radius:6px;object-fit:contain;}
+  .lb-cap{color:var(--yellow);font-family:'DM Mono',monospace;font-size:12px;letter-spacing:0.08em;}
+  .lb-x{position:absolute;top:18px;right:22px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:white;font-size:20px;width:38px;height:38px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:sans-serif;}
+
+  @media print {
+    .toolbar,.stats-bar,.delete-row,.photo-upload-btn,#export-overlay,.lightbox,tfoot{display:none!important;}
+    header{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    table{box-shadow:none;font-size:9px;}
+    th:last-of-type,td.photo-cell,th.center:last-of-type{display:none!important;}
+    .table-wrap{padding:8px 12px;}
+    body{background:white;}
+
+    /* Hide placeholders and interactive elements */
+    td input::placeholder,td textarea::placeholder{color:transparent!important;}
+    td select{-webkit-appearance:none;appearance:none;background:transparent!important;border:none!important;padding:2px 4px;}
+    td input[type="text"],td textarea{border:none!important;background:transparent!important;padding:2px 4px;}
+    td textarea{height:auto!important;overflow:hidden;}
+
+    /* Tighter rows */
+    td,th{padding:5px 6px!important;}
+    tbody tr{border-bottom:1px solid #ddd;}
+
+    /* Fit table to page */
+    .table-wrap{overflow:visible!important;}
+    table{min-width:0!important;width:100%!important;table-layout:fixed;}
+    th:nth-child(1),td:nth-child(1){width:5%;}
+    th:nth-child(2),td:nth-child(2){width:18%;}
+    th:nth-child(3),td:nth-child(3){width:8%;}
+    th:nth-child(4),td:nth-child(4){width:20%;}
+    th:nth-child(5),td:nth-child(5){width:36%;}
+    th:nth-child(6),td:nth-child(6){width:10%;}
+    td{word-break:break-word;}
+
+    .photo-sheet{display:block!important;}
+    .photo-sheet-page{page-break-before:always;}
+    .photo-grid{grid-template-columns:repeat(2,1fr);gap:24px;padding:20px 24px;}
+    .photo-card img{height:260px;}
+    .photo-card-label{font-size:11px;padding:6px 10px;}
+    .photo-card-meta{font-size:9px;padding:6px 10px;}
+
+    @page{size:portrait;margin:1cm;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-logo">
+    <img src="https://www.bratttree.com/wp-content/uploads/2025/10/badge-logo.svg" alt="Bratt Tree Logo">
+  </div>
+  <div class="header-title">
+    <h1>Tree Inventory</h1>
+  </div>
+  <div class="header-meta">
+    <div class="meta-field"><label>Date</label><input type="text" id="inv-date" placeholder="MM/DD/YYYY"></div>
+    <div class="meta-field"><label>Arborist</label><input type="text" id="inv-arborist" placeholder="Name"></div>
+    <div class="meta-field"><label>Location / Site</label><input type="text" id="inv-site" placeholder="Location / Site"></div>
+    <div class="meta-field"><label>Weather</label><input type="text" id="inv-weather" placeholder="Conditions"></div>
+  </div>
+</header>
+
+<div class="toolbar">
+  <button class="btn-primary" onclick="addRow()">＋ Add Tree</button>
+  <button class="btn-export" onclick="showExport()">↓ Download / Print</button>
+  <button class="btn-zip" onclick="downloadImages()">↓ Download Images</button>
+  <button class="btn-ghost" onclick="exportCSV()">↓ Export CSV</button>
+  <button class="btn-danger" onclick="clearAll()">✕ Clear All</button>
+  <div class="save-status"><span class="save-dot" id="save-dot"></span><span id="save-label">Not saved yet</span></div>
+</div>
+
+<div class="stats-bar" id="stats-bar"></div>
+
+<div class="table-wrap">
+  <table id="inventory-table">
+    <thead>
+      <tr>
+        <th class="center">#</th>
+        <th>Species</th>
+        <th>DBH</th>
+        <th>Condition</th>
+        <th>Notes / Detail</th>
+        <th class="center">75' Setback</th>
+        <th class="center">Photo</th>
+        <th class="center">Del</th>
+      </tr>
+    </thead>
+    <tbody id="tree-body"></tbody>
+    <tfoot>
+      <tr>
+        <td colspan="8">
+          <button class="btn-primary" onclick="addRow()" style="font-family:'DM Mono',monospace;font-size:11px;letter-spacing:.06em;text-transform:uppercase;padding:6px 16px;border:1px solid var(--orange);border-radius:3px;cursor:pointer;background:var(--orange);color:white;">＋ Add Row</button>
+        </td>
+      </tr>
+    </tfoot>
+  </table>
+</div>
+
+<!-- Photo sheet for printing -->
+<div class="photo-sheet" id="photo-sheet">
+  <div class="photo-sheet-page">
+    <header style="-webkit-print-color-adjust:exact;print-color-adjust:exact;background:#26190E;border-bottom:4px solid #EB4C1B;padding:16px 32px;">
+      <div style="font-family:'Barlow Condensed',sans-serif;font-size:1.3rem;font-weight:700;letter-spacing:0.12em;color:#E9E71D;text-transform:uppercase;">Tree Inventory — Photo Reference</div>
+    </header>
+    <div class="photo-grid" id="photo-grid"></div>
+  </div>
+</div>
+
+<!-- Lightbox -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
+  <button class="lightbox-close" onclick="closeLightbox(null,true)">✕</button>
+  <img id="lightbox-img" src="" alt="">
+  <div class="lightbox-caption" id="lightbox-cap"></div>
+</div>
+
+<!-- Export overlay -->
+<div id="export-overlay">
+  <div class="export-box">
+    <h2>Download & Print</h2>
+    <p>Photos are embedded in the HTML — one self-contained file that works offline. Use Print → Save as PDF for a PDF version with a large photo reference sheet.</p>
+    <div class="export-actions">
+      <button class="export-btn-html" onclick="downloadHTML()">
+        ↓ Download as HTML file
+        <small>Single file with all data + photos embedded. Share via email or USB.</small>
+      </button>
+      <button class="export-btn-print" onclick="printReport()">
+        ⎙ Print / Save as PDF
+        <small>Opens print dialog — choose "Save as PDF". Includes large photo reference sheet.</small>
+      </button>
+      <button class="export-btn-cancel" onclick="hideExport()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const existingData=[
+  {num:1,species:"Spruce",dbh:"7",condition:"Fair",notes:"",setback:"N"},
+  {num:2,species:"Spruce",dbh:"7",condition:"Fair",notes:"",setback:"N"},
+  {num:3,species:"Spruce",dbh:"7",condition:"Fair",notes:"",setback:"N"},
+  {num:4,species:"Spruce",dbh:"7",condition:"Fair",notes:"",setback:"N"},
+  {num:5,species:"Spruce",dbh:"7",condition:"Fair",notes:"",setback:"N"},
+  {num:6,species:"Spruce",dbh:"7",condition:"Fair",notes:"",setback:"N"},
+  {num:7,species:"Spruce",dbh:"7",condition:"Fair",notes:"",setback:"N"},
+  {num:8,species:"Spruce",dbh:"7",condition:"Fair",notes:"",setback:"N"},
+  {num:9,species:"Spruce",dbh:"7",condition:"Fair",notes:"",setback:"N"},
+  {num:10,species:"Spruce",dbh:"7",condition:"Fair",notes:"",setback:"N"},
+  {num:11,species:"Spruce",dbh:"7",condition:"Fair",notes:"",setback:"N"},
+  {num:12,species:"Poplar",dbh:"10.5",condition:"Dead",notes:"",setback:"Y"},
+  {num:13,species:"Poplar",dbh:"10.5",condition:"Dead",notes:"",setback:"Y"},
+  {num:14,species:"Poplar",dbh:"10.5",condition:"Dead",notes:"",setback:"Y"},
+  {num:15,species:"Poplar",dbh:"10.5",condition:"Dead",notes:"",setback:"Y"},
+  {num:16,species:"Poplar",dbh:"10.5",condition:"Dead",notes:"",setback:"Y"},
+  {num:17,species:"Spruce",dbh:"9",condition:"Fair",notes:"Spider Mites",setback:"Y"},
+  {num:18,species:"Box Elder",dbh:"25",condition:"Fair",notes:"",setback:"Y"},
+  {num:19,species:"Red Oak",dbh:"31",condition:"Poor",notes:"Two Lined Chestnut Borer",setback:"Y"},
+  {num:20,species:"Basswood",dbh:"24",condition:"Poor",notes:"Severe Lean Over Structure",setback:"Y"},
+  {num:21,species:"Spruce",dbh:"8",condition:"Poor",notes:"",setback:"N"},
+  {num:22,species:"Ash",dbh:"14",condition:"Poor",notes:"EAB",setback:"Y"},
+  {num:23,species:"Ash",dbh:"19",condition:"Poor",notes:"EAB",setback:"Y"},
+  {num:24,species:"Willow",dbh:"48",condition:"Structurally Defective",notes:"Major Structural Defects",setback:"Y"},
+  {num:25,species:"Spruce",dbh:"9",condition:"Fair",notes:"",setback:"Y"},
+  {num:26,species:"Red Maple",dbh:"21",condition:"Poor",notes:"Half Dead",setback:"Y"},
+  {num:27,species:"Red Maple",dbh:"29",condition:"Poor",notes:"Large Defect in Trunk",setback:"Y"},
+  {num:28,species:"Sugar Maple",dbh:"34",condition:"Poor",notes:"Large Defect in Trunk",setback:"Y"},
+  {num:29,species:"Basswood",dbh:"20",condition:"Fair",notes:"",setback:"Y"},
+  {num:30,species:"Willow",dbh:"40",condition:"Fair",notes:"",setback:"Y"},
+  {num:31,species:"Basswood",dbh:"28",condition:"Fair",notes:"",setback:"On Line"},
+  {num:32,species:"Linden",dbh:"20",condition:"Fair",notes:"",setback:"On Line"},
+  {num:33,species:"Red Pine",dbh:"12",condition:"Fair",notes:"Diplodia",setback:"N"},
+  {num:34,species:"Red Pine",dbh:"12",condition:"Fair",notes:"Diplodia",setback:"N"},
+  {num:35,species:"Red Pine",dbh:"12",condition:"Fair",notes:"Diplodia",setback:"N"},
+  {num:36,species:"Red Pine",dbh:"12",condition:"Fair",notes:"Diplodia",setback:"N"},
+  {num:37,species:"Red Pine",dbh:"12",condition:"Fair",notes:"Diplodia",setback:"N"},
+  {num:38,species:"Bur Oak",dbh:"46",condition:"Fair",notes:"",setback:"N"},
+  {num:39,species:"Willow",dbh:"41",condition:"Fair",notes:"",setback:"Y"},
+  {num:40,species:"Willow",dbh:"34",condition:"Fair",notes:"Tip Dieback",setback:"Y"},
+  {num:41,species:"White Pine",dbh:"8",condition:"Fair",notes:"",setback:"On Line"},
+  {num:42,species:"White Pine",dbh:"18",condition:"Fair",notes:"",setback:"Y"},
+  {num:43,species:"Blue Spruce",dbh:"17",condition:"Fair",notes:"",setback:"Y"},
+  {num:44,species:"Blue Spruce",dbh:"10",condition:"Poor",notes:"Rhizosphaera Needle Cast",setback:"Y"},
+  {num:45,species:"Red Cedar",dbh:"7",condition:"Fair",notes:"",setback:"On Line"},
+  {num:46,species:"Red Cedar",dbh:"7",condition:"Fair",notes:"",setback:"On Line"},
+  {num:47,species:"Red Cedar",dbh:"5",condition:"Fair",notes:"",setback:"On Line"},
+  {num:48,species:"Red Cedar",dbh:"5",condition:"Fair",notes:"",setback:"On Line"},
+  {num:49,species:"Red Cedar",dbh:"7",condition:"Fair",notes:"",setback:"On Line"},
+  {num:50,species:"Basswood",dbh:"30",condition:"Fair",notes:"",setback:"N"},
+  {num:51,species:"Hackberry",dbh:"17",condition:"Fair",notes:"",setback:"N"},
+  {num:52,species:"Red Cedar",dbh:"7",condition:"Fair",notes:"",setback:"N"},
+  {num:53,species:"Red Cedar",dbh:"7",condition:"Fair",notes:"",setback:"N"},
+  {num:54,species:"Red Cedar",dbh:"5",condition:"Fair",notes:"",setback:"N"},
+  {num:55,species:"Red Cedar",dbh:"5",condition:"Fair",notes:"",setback:"N"},
+  {num:56,species:"Spruce",dbh:"6",condition:"Poor",notes:"Rhizosphaera Needle Cast",setback:"Y"},
+  {num:57,species:"Basswood",dbh:"17",condition:"Fair",notes:"",setback:"N"},
+  {num:58,species:"Basswood",dbh:"17",condition:"Fair",notes:"",setback:"On Line"},
+  {num:59,species:"Basswood",dbh:"17",condition:"Fair",notes:"",setback:"On Line"},
+  {num:60,species:"Willow",dbh:"44",condition:"Structurally Defective",notes:"",setback:"Y"},
+  {num:61,species:"Willow",dbh:"23",condition:"Fair",notes:"",setback:"Y"},
+  {num:62,species:"Willow",dbh:"29",condition:"Fair",notes:"",setback:"Y"},
+  {num:63,species:"Willow",dbh:"22",condition:"Fair",notes:"",setback:"Y"},
+  {num:64,species:"Ash",dbh:"13",condition:"Poor",notes:"EAB",setback:"Y"},
+  {num:65,species:"Blue Spruce",dbh:"8",condition:"Poor",notes:"Spider Mites",setback:"Y"},
+  {num:66,species:"Blue Spruce",dbh:"9",condition:"Fair",notes:"",setback:"N"},
+  {num:67,species:"Basswood",dbh:"20",condition:"Fair",notes:"",setback:"Y"},
+  {num:68,species:"Basswood",dbh:"26",condition:"Fair",notes:"",setback:"Y"},
+  {num:69,species:"Hackberry",dbh:"18",condition:"Fair",notes:"",setback:"Y"},
+  {num:70,species:"Willow",dbh:"31",condition:"Dead",notes:"",setback:"Y"},
+  {num:71,species:"Willow",dbh:"30",condition:"Fair",notes:"",setback:"Y"},
+  {num:72,species:"Willow",dbh:"21",condition:"Fair",notes:"",setback:"Y"},
+  {num:73,species:"Black Willow",dbh:"12",condition:"Fair",notes:"",setback:"Y"},
+  {num:74,species:"River Birch",dbh:"10",condition:"Fair",notes:"",setback:"Y"},
+  {num:75,species:"River Birch",dbh:"8",condition:"Fair",notes:"",setback:"Y"},
+  {num:76,species:"Willow",dbh:"9",condition:"Fair",notes:"",setback:"N"},
+  {num:77,species:"Willow",dbh:"6",condition:"Fair",notes:"",setback:"Y"},
+  {num:78,species:"Elm",dbh:"24",condition:"Fair",notes:"",setback:"Y"},
+  {num:79,species:"River Birch",dbh:"6",condition:"Fair",notes:"",setback:"Y"},
+  {num:80,species:"Willow",dbh:"15",condition:"Structurally Defective",notes:"",setback:"Y"},
+  {num:81,species:"River Birch",dbh:"7",condition:"Fair",notes:"",setback:"Y"},
+  {num:82,species:"Willow",dbh:"47",condition:"Structurally Defective",notes:"",setback:"Y"},
+  {num:83,species:"Willow",dbh:"54",condition:"Fair",notes:"",setback:"Y"},
+  {num:84,species:"Willow",dbh:"52",condition:"Structurally Defective",notes:"",setback:"Y"},
+  {num:85,species:"Willow",dbh:"46",condition:"Fair",notes:"",setback:"Y"},
+  {num:86,species:"White Pine",dbh:"12",condition:"Fair",notes:"",setback:"Y"},
+  {num:87,species:"White Pine",dbh:"12",condition:"Fair",notes:"",setback:"Y"},
+  {num:88,species:"White Pine",dbh:"12",condition:"Fair",notes:"",setback:"Y"},
+  {num:89,species:"White Pine",dbh:"12",condition:"Fair",notes:"",setback:"Y"},
+  {num:90,species:"Box Elder",dbh:"6",condition:"Fair",notes:"",setback:"Y"},
+  {num:91,species:"Elm",dbh:"6",condition:"Fair",notes:"",setback:"Y"},
+  {num:92,species:"Red Cedar",dbh:"16",condition:"Fair",notes:"",setback:"Y"},
+  {num:93,species:"Red Cedar",dbh:"16",condition:"Fair",notes:"",setback:"Y"},
+  {num:94,species:"White Pine",dbh:"13",condition:"Fair",notes:"",setback:"Y"},
+  {num:95,species:"Blue Spruce",dbh:"14",condition:"Poor",notes:"Spider Mites, Rhizosphaera",setback:"N"},
+  {num:96,species:"Blue Spruce",dbh:"17",condition:"Poor",notes:"Spider Mites, Rhizosphaera",setback:"N"},
+  {num:97,species:"Scotch Pine",dbh:"24",condition:"Fair",notes:"",setback:"N"},
+  {num:98,species:"Scotch Pine",dbh:"20",condition:"Fair",notes:"",setback:"N"},
+  {num:99,species:"Scotch Pine",dbh:"19",condition:"Fair",notes:"",setback:"N"},
+  {num:100,species:"Austrian Pine",dbh:"25",condition:"Fair",notes:"",setback:"N"},
+  {num:101,species:"Austrian Pine",dbh:"21",condition:"Fair",notes:"",setback:"N"},
+  {num:102,species:"Scotch Pine",dbh:"24",condition:"Fair",notes:"",setback:"N"},
+  {num:103,species:"Ponderosa Pine",dbh:"22",condition:"Fair",notes:"",setback:"N"},
+  {num:104,species:"Scotch Pine",dbh:"26",condition:"Fair",notes:"",setback:"N"},
+  {num:105,species:"Blue Spruce",dbh:"13",condition:"Poor",notes:"Spider Mites",setback:"N"}
+];
+
+const conditions=["Fair","Poor","Dead","Structurally Defective","Rhizosphaera Needle Cast","EAB","Diplodia","Other"];
+const setbackOpts=["N","Y","On Line"];
+const photoStore={};
+let rowCounter=0;
+
+function condClass(v){
+  if(!v)return'';const l=v.toLowerCase();
+  if(l==='fair')return'cond-fair';
+  if(l==='dead'||l.includes('defective'))return'cond-dead';
+  return'cond-poor';
+}
+
+function compressImage(dataUrl,maxW,maxH,quality,cb){
+  const img=new Image();
+  img.onload=function(){
+    let w=img.width,h=img.height;
+    if(w>maxW){h=Math.round(h*maxW/w);w=maxW;}
+    if(h>maxH){w=Math.round(w*maxH/h);h=maxH;}
+    const c=document.createElement('canvas');
+    c.width=w;c.height=h;
+    c.getContext('2d').drawImage(img,0,0,w,h);
+    cb(c.toDataURL('image/jpeg',quality));
+  };
+  img.src=dataUrl;
+}
+
+function createRow(data){
+  const id=++rowCounter;
+  const tr=document.createElement('tr');
+  tr.dataset.rowId=id;tr.dataset.treeNum=data.num||id;
+
+  const tdNum=document.createElement('td');tdNum.className='tree-num';tdNum.textContent=data.num||id;tr.appendChild(tdNum);
+
+  const tdSp=document.createElement('td');
+  const inSp=document.createElement('input');inSp.type='text';inSp.value=data.species||'';inSp.placeholder='Species';
+  tdSp.appendChild(inSp);tr.appendChild(tdSp);
+
+  const tdDbh=document.createElement('td');
+  const inDbh=document.createElement('input');inDbh.type='text';inDbh.value=data.dbh?(data.dbh+'"'):'';inDbh.placeholder='0"';inDbh.style.width='56px';
+  tdDbh.appendChild(inDbh);tr.appendChild(tdDbh);
+
+  const tdCond=document.createElement('td');
+  const selCond=document.createElement('select');selCond.className=condClass(data.condition);
+  const blank=document.createElement('option');blank.value='';blank.textContent='—';selCond.appendChild(blank);
+  conditions.forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;if(data.condition&&data.condition.includes(c))o.selected=true;selCond.appendChild(o);});
+  selCond.addEventListener('change',function(){this.className=condClass(this.value);updateStats();});
+  tdCond.appendChild(selCond);tr.appendChild(tdCond);
+
+  const tdNotes=document.createElement('td');
+  const tx=document.createElement('textarea');tx.value=data.notes||'';tx.placeholder='Additional notes…';
+  tdNotes.appendChild(tx);tr.appendChild(tdNotes);
+
+  const tdSet=document.createElement('td');tdSet.className='setback';
+  const selSet=document.createElement('select');
+  setbackOpts.forEach(s=>{const o=document.createElement('option');o.value=s;o.textContent=s;if(data.setback===s)o.selected=true;selSet.appendChild(o);});
+  tdSet.appendChild(selSet);tr.appendChild(tdSet);
+
+  const tdPhoto=document.createElement('td');tdPhoto.className='photo-cell';
+  const fi=document.createElement('input');fi.type='file';fi.accept='image/*';fi.id='file-'+id;
+  fi.addEventListener('change',function(){handlePhoto(this,id,data.num||id);});
+  const lbl=document.createElement('label');lbl.htmlFor='file-'+id;lbl.className='photo-upload-btn';lbl.title='Upload photo';lbl.textContent='+';
+  tdPhoto.appendChild(fi);tdPhoto.appendChild(lbl);tr.appendChild(tdPhoto);
+
+  const tdDel=document.createElement('td');tdDel.className='center';
+  const db=document.createElement('button');db.className='delete-row';db.title='Remove row';db.textContent='✕';
+  db.addEventListener('click',function(){
+    if(confirm('Remove tree #'+(data.num||id)+'?')){tr.remove();delete photoStore[id];renumberRows();updateStats();}
+  });
+  tdDel.appendChild(db);tr.appendChild(tdDel);
+  return tr;
+}
+
+function renderThumb(td,dataUrl,rowId,treeNum){
+  const wrap=document.createElement('div');wrap.className='photo-thumb-wrap';
+  const img=document.createElement('img');img.className='photo-thumb';img.src=dataUrl;img.alt='Tree #'+treeNum;
+  img.addEventListener('click',()=>openLightbox(dataUrl,'Tree #'+treeNum));
+  const rb=document.createElement('button');rb.className='photo-remove';rb.title='Remove';rb.textContent='✕';
+  rb.addEventListener('click',function(e){
+    e.stopPropagation();delete photoStore[rowId];
+    td.innerHTML='';
+    const fi=document.createElement('input');fi.type='file';fi.accept='image/*';fi.id='file-'+rowId;
+    fi.addEventListener('change',function(){handlePhoto(this,rowId,treeNum);});
+    const lbl=document.createElement('label');lbl.htmlFor='file-'+rowId;lbl.className='photo-upload-btn';lbl.title='Upload photo';lbl.textContent='+';
+    td.appendChild(fi);td.appendChild(lbl);
+  });
+  wrap.appendChild(img);wrap.appendChild(rb);
+  const fi=td.querySelector('input[type="file"]');td.innerHTML='';if(fi)td.appendChild(fi);td.appendChild(wrap);
+}
+
+function handlePhoto(input,rowId,treeNum){
+  const f=input.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=function(e){
+    compressImage(e.target.result,1200,1200,0.75,function(compressed){
+      photoStore[rowId]=compressed;
+      renderThumb(input.closest('td'),compressed,rowId,treeNum);
+    });
+  };
+  r.readAsDataURL(f);
+}
+
+function openLightbox(src,caption){
+  document.getElementById('lightbox-img').src=src;
+  document.getElementById('lightbox-cap').textContent=caption;
+  document.getElementById('lightbox').classList.add('active');
+  document.addEventListener('keydown',lbKey);
+}
+function closeLightbox(e,force){
+  if(force||!e||e.target===document.getElementById('lightbox')){
+    document.getElementById('lightbox').classList.remove('active');
+    document.getElementById('lightbox-img').src='';
+    document.removeEventListener('keydown',lbKey);
+  }
+}
+function lbKey(e){if(e.key==='Escape')closeLightbox(null,true);}
+
+function addRow(){
+  const body=document.getElementById('tree-body');
+  body.appendChild(createRow({num:body.rows.length+1}));updateStats();
+}
+function renumberRows(){
+  document.querySelectorAll('#tree-body tr').forEach((tr,i)=>{
+    const c=tr.querySelector('td.tree-num');if(c)c.textContent=i+1;tr.dataset.treeNum=i+1;
+  });
+}
+function updateStats(){
+  const rows=document.querySelectorAll('#tree-body tr');
+  let fair=0,poor=0,dead=0,def=0;
+  rows.forEach(tr=>{
+    const s=tr.querySelector('select');if(!s)return;
+    const v=s.value.toLowerCase();
+    if(v==='fair')fair++;else if(v==='dead')dead++;else if(v.includes('defective'))def++;else if(v)poor++;
+  });
+  document.getElementById('stats-bar').innerHTML=`
+    <div class="stat"><strong>${rows.length}</strong> Trees</div>
+    <div class="stat"><span class="dot dot-ok"></span><strong>${fair}</strong> Fair</div>
+    <div class="stat"><span class="dot dot-warn"></span><strong>${poor}</strong> Poor / Disease</div>
+    <div class="stat"><span class="dot dot-danger"></span><strong>${dead+def}</strong> Dead / Defective</div>`;
+}
+function clearAll(){
+  if(confirm('Clear all rows? This cannot be undone.')){
+    document.getElementById('tree-body').innerHTML='';
+    Object.keys(photoStore).forEach(k=>delete photoStore[k]);
+    rowCounter=0;updateStats();
+  }
+}
+function exportCSV(){
+  const rows=document.querySelectorAll('#tree-body tr');
+  let csv="#,Species,DBH,Condition,Notes,Inside 75' Setback,Photo\n";
+  rows.forEach(tr=>{
+    const c=tr.querySelectorAll('td');
+    const num=c[0].textContent.trim(),species=c[1].querySelector('input').value,
+          dbh=c[2].querySelector('input').value,cond=c[3].querySelector('select').value,
+          notes=c[4].querySelector('textarea').value.replace(/\n/g,' '),
+          setback=c[5].querySelector('select').value,hasPhoto=photoStore[tr.dataset.rowId]?'Yes':'No';
+    csv+=`${num},"${species}","${dbh}","${cond}","${notes}","${setback}","${hasPhoto}"\n`;
+  });
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download='BrattTree_TreeInventory.csv';a.click();
+}
+
+function buildPhotoSheet(){
+  const grid=document.getElementById('photo-grid');grid.innerHTML='';
+  let count=0;
+  document.querySelectorAll('#tree-body tr').forEach(tr=>{
+    const rid=tr.dataset.rowId,photo=photoStore[rid];if(!photo)return;count++;
+    const c=tr.querySelectorAll('td');
+    const tnum=c[0].textContent.trim(),species=c[1].querySelector('input').value||'—',
+          dbh=c[2].querySelector('input').value||'—',cond=c[3].querySelector('select').value||'—';
+    const card=document.createElement('div');card.className='photo-card';
+    card.innerHTML=`<div class="photo-card-label">Tree #${tnum}</div>
+      <img src="${photo}" alt="Tree ${tnum}" onclick="openLightbox(this.src,'Tree #${tnum}')">
+      <div class="photo-card-meta">${species} · DBH ${dbh} · ${cond}</div>`;
+    grid.appendChild(card);
+  });
+  document.getElementById('photo-sheet').style.display=count>0?'block':'none';
+}
+
+function serializeToHTML(){
+  const rows=document.querySelectorAll('#tree-body tr');
+  const rowData=[];
+  rows.forEach(tr=>{
+    const rid=tr.dataset.rowId,c=tr.querySelectorAll('td');
+    rowData.push({
+      num:c[0].textContent.trim(),
+      species:c[1].querySelector('input').value,
+      dbh:c[2].querySelector('input').value.replace('"',''),
+      condition:c[3].querySelector('select').value,
+      notes:c[4].querySelector('textarea').value,
+      setback:c[5].querySelector('select').value,
+      photo:photoStore[rid]||null
+    });
+  });
+  const date=document.getElementById('inv-date').value.trim();
+  const arborist=document.getElementById('inv-arborist').value.trim();
+  const site=document.getElementById('inv-site').value.trim();
+  const weather=document.getElementById('inv-weather').value.trim();
+
+  const tableRows=rowData.map(r=>{
+    const cc=r.condition==='Fair'?'#448629':r.condition==='Dead'||r.condition.includes('Defective')?'#b84040':'#A35817';
+    const sc=r.setback==='Y'?'#448629':r.setback==='On Line'?'#A35817':'#7A4120';
+    return`<tr>
+      <td style="text-align:center;font-size:11px;color:#7A4120;font-weight:500;">${r.num}</td>
+      <td>${r.species||''}</td>
+      <td>${r.dbh?r.dbh+'"':''}</td>
+      <td style="color:${cc}">${r.condition||''}</td>
+      <td style="font-size:10px">${r.notes||''}</td>
+      <td style="text-align:center;color:${sc}">${r.setback||''}</td>
+      <td style="text-align:center">${r.photo?`<img src="${r.photo}" alt="Tree #${r.num}" onclick="openLb(this.src,'Tree #${r.num}')" style="width:40px;height:40px;object-fit:cover;border-radius:4px;border:1.5px solid #EB4C1B;cursor:pointer;" onmouseover="this.style.transform='scale(1.15)'" onmouseout="this.style.transform='scale(1)'">`:''}
+      </td></tr>`;}).join('');
+
+  const photoCards=rowData.filter(r=>r.photo).map(r=>`
+    <div class="photo-card">
+      <div class="photo-card-label">Tree #${r.num}</div>
+      <img src="${r.photo}" alt="Tree #${r.num}" onclick="openLb(this.src,'Tree #${r.num}')">
+      <div class="photo-card-meta">${r.species||'—'} · DBH ${r.dbh?r.dbh+'"':'—'} · ${r.condition||'—'}</div>
+    </div>`).join('');
+
+  return`<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Bratt Tree${site?' — '+site:''}${date?' ('+date+')':''}</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Barlow+Condensed:wght@400;600;700&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#f7f2e8;font-family:'DM Mono',monospace;color:#26190E;}
+header{background:#26190E;display:flex;align-items:stretch;min-height:90px;border-bottom:4px solid #EB4C1B;}
+.hlogo{padding:10px 20px 10px 28px;display:flex;align-items:center;border-right:3px solid #EB4C1B;}
+.htitle{padding:14px 24px;display:flex;flex-direction:column;justify-content:center;}
+.htitle h1{font-family:'Barlow Condensed',sans-serif;font-size:2rem;font-weight:700;letter-spacing:0.12em;color:#E9E71D;text-transform:uppercase;}
+.hmeta{display:flex;gap:18px;flex-wrap:wrap;margin-left:auto;padding:14px 28px;align-items:center;}
+.mf{display:flex;flex-direction:column;gap:3px;}
+.mf label{font-size:9px;letter-spacing:0.12em;text-transform:uppercase;color:white;opacity:0.75;}
+.mf span{font-size:12px;color:white;border-bottom:1px solid #CC813B;padding:2px 0;min-width:100px;display:block;}
+.stats{background:#fffdf7;border-bottom:1px solid #c8b99a;padding:8px 32px;display:flex;gap:28px;font-size:11px;color:#7A4120;flex-wrap:wrap;}
+.stat{display:flex;gap:6px;align-items:center;}.stat strong{color:#26190E;font-size:13px;}
+.dot{width:8px;height:8px;border-radius:50%;}
+.tw{overflow-x:auto;padding:20px 32px 40px;}
+table{width:100%;border-collapse:collapse;min-width:820px;background:#fffdf7;border:1px solid #c8b99a;border-radius:6px;overflow:hidden;}
+thead tr{background:#26190E;}
+th{font-size:9px;letter-spacing:0.14em;text-transform:uppercase;padding:11px 10px;text-align:left;font-weight:500;white-space:nowrap;color:white;}
+th.c{text-align:center;}
+tbody tr{border-bottom:1px solid #c8b99a;}tbody tr:last-child{border-bottom:none;}
+tbody tr:nth-child(even){background:#f7f2e8;}
+td{padding:7px 10px;font-size:11px;vertical-align:middle;}
+.photo-sheet-hdr{background:#26190E;border-bottom:4px solid #EB4C1B;padding:16px 32px;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+.photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;padding:24px 32px;}
+.photo-card{border:1px solid #c8b99a;border-radius:6px;overflow:hidden;background:#fffdf7;break-inside:avoid;}
+.photo-card-label{background:#26190E;color:#E9E71D;font-size:10px;letter-spacing:0.1em;padding:5px 10px;font-family:'Barlow Condensed',sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+.photo-card img{width:100%;height:200px;object-fit:cover;display:block;cursor:pointer;}
+.photo-card-meta{padding:6px 10px;font-size:9px;color:#7A4120;line-height:1.5;}
+.lb{display:none;position:fixed;inset:0;background:rgba(20,10,4,0.92);z-index:9999;align-items:center;justify-content:center;flex-direction:column;gap:14px;cursor:zoom-out;}
+.lb.on{display:flex;}
+.lb img{max-width:92vw;max-height:84vh;border-radius:6px;object-fit:contain;}
+.lb-cap{color:#E9E71D;font-family:'DM Mono',monospace;font-size:12px;letter-spacing:0.08em;}
+.lb-x{position:absolute;top:18px;right:22px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:white;font-size:20px;width:38px;height:38px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:sans-serif;}
+@media print{
+  .photo-sheet{page-break-before:always;}
+  .photo-grid{grid-template-columns:repeat(2,1fr);gap:24px;}
+  .photo-card img{height:280px;}
+}
+</style></head><body>
+<header>
+  <div class="hlogo"><img src="https://www.bratttree.com/wp-content/uploads/2025/10/badge-logo.svg" style="height:72px;width:auto;display:block;" alt="Bratt Tree"></div>
+  <div class="htitle"><h1>Tree Inventory</h1></div>
+  <div class="hmeta">
+    ${date?`<div class="mf"><label>Date</label><span>${date}</span></div>`:''}
+    ${arborist?`<div class="mf"><label>Arborist</label><span>${arborist}</span></div>`:''}
+    ${site?`<div class="mf"><label>Location / Site</label><span>${site}</span></div>`:''}
+    ${weather?`<div class="mf"><label>Weather</label><span>${weather}</span></div>`:''}
+  </div>
+</header>
+<div class="stats">
+  <div class="stat"><strong>${rowData.length}</strong> Trees</div>
+  <div class="stat"><span class="dot" style="background:#448629"></span><strong>${rowData.filter(r=>r.condition==='Fair').length}</strong> Fair</div>
+  <div class="stat"><span class="dot" style="background:#A35817"></span><strong>${rowData.filter(r=>r.condition&&r.condition!=='Fair'&&r.condition!=='Dead'&&!r.condition.includes('Defective')).length}</strong> Poor / Disease</div>
+  <div class="stat"><span class="dot" style="background:#b84040"></span><strong>${rowData.filter(r=>r.condition==='Dead'||r.condition.includes('Defective')).length}</strong> Dead / Defective</div>
+</div>
+<div class="tw"><table>
+<thead><tr><th class="c">#</th><th>Species</th><th>DBH</th><th>Condition</th><th>Notes / Detail</th><th class="c">75' Setback</th><th class="c">Photo</th></tr></thead>
+<tbody>${tableRows}</tbody>
+</table></div>
+${photoCards?`<div class="photo-sheet">
+<div class="photo-sheet-hdr"><div style="font-family:'Barlow Condensed',sans-serif;font-size:1.3rem;font-weight:700;letter-spacing:0.12em;color:#E9E71D;text-transform:uppercase;">Tree Inventory — Photo Reference</div></div>
+<div class="photo-grid">${photoCards}</div>
+</div>`:''}
+<div class="lb" id="lb" onclick="this.classList.remove('on')">
+  <button class="lb-x" onclick="document.getElementById('lb').classList.remove('on')">✕</button>
+  <img id="lb-img" src="" alt=""><div class="lb-cap" id="lb-cap"></div>
+</div>
+<script>
+function openLb(src,cap){var lb=document.getElementById('lb');document.getElementById('lb-img').src=src;document.getElementById('lb-cap').textContent=cap||'';lb.classList.add('on');}
+document.addEventListener('keydown',function(e){if(e.key==='Escape')document.getElementById('lb').classList.remove('on');});
+<\/script>
+</body></html>`;
+}
+
+function showExport(){document.getElementById('export-overlay').classList.add('active');}
+function hideExport(){document.getElementById('export-overlay').classList.remove('active');}
+
+function downloadHTML(){
+  const html=serializeToHTML();
+  const rawDate=document.getElementById('inv-date').value.trim();
+  const rawSite=document.getElementById('inv-site').value.trim();
+  const datePart=rawDate?'_'+rawDate.replace(/\//g,'-'):'';
+  const sitePart=rawSite?rawSite.replace(/\s+/g,'_')+'_':'';
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob([html],{type:'text/html'}));
+  a.download=`${sitePart}BrattTree_TreeInventory${datePart}.html`;
+  a.click();hideExport();
+}
+
+function printReport(){
+  hideExport();
+  buildPhotoSheet();
+
+  // Gather data
+  const rows=document.querySelectorAll('#tree-body tr');
+  const rowData=[];
+  rows.forEach(tr=>{
+    const rid=tr.dataset.rowId,c=tr.querySelectorAll('td');
+    rowData.push({
+      num:c[0].textContent.trim(),
+      species:c[1].querySelector('input').value||'',
+      dbh:c[2].querySelector('input').value||'',
+      condition:c[3].querySelector('select').value||'',
+      notes:c[4].querySelector('textarea').value||'',
+      setback:c[5].querySelector('select').value||'',
+      photo:photoStore[rid]||null
+    });
+  });
+
+  const date=document.getElementById('inv-date').value.trim();
+  const arborist=document.getElementById('inv-arborist').value.trim();
+  const site=document.getElementById('inv-site').value.trim();
+  const weather=document.getElementById('inv-weather').value.trim();
+
+  const condColor=v=>v==='Fair'?'#448629':v==='Dead'||v.includes('Defective')?'#b84040':'#A35817';
+  const setbackColor=v=>v==='Y'?'#448629':v==='On Line'?'#A35817':'#26190E';
+
+  const tableRows=rowData.map((r,i)=>`
+    <tr style="background:${i%2===0?'#ffffff':'#f7f2e8'}">
+      <td style="text-align:center;color:#7A4120;font-weight:600;">${r.num}</td>
+      <td>${r.species}</td>
+      <td>${r.dbh}</td>
+      <td style="color:${condColor(r.condition)};font-weight:500;">${r.condition}</td>
+      <td style="color:#555;">${r.notes}</td>
+      <td style="text-align:center;color:${setbackColor(r.setback)};font-weight:600;">${r.setback}</td>
+    </tr>`).join('');
+
+  const photoCards=rowData.filter(r=>r.photo).map(r=>`
+    <div style="border:1px solid #c8b99a;border-radius:6px;overflow:hidden;break-inside:avoid;">
+      <div style="background:#26190E;color:#E9E71D;font-size:11px;letter-spacing:0.1em;padding:6px 10px;font-family:sans-serif;font-weight:700;">Tree #${r.num} — ${r.species}</div>
+      <img src="${r.photo}" style="width:100%;height:260px;object-fit:cover;display:block;">
+      <div style="padding:6px 10px;font-size:9px;color:#7A4120;font-family:monospace;">DBH ${r.dbh} · ${r.condition}</div>
+    </div>`).join('');
+
+  const fair=rowData.filter(r=>r.condition==='Fair').length;
+  const poor=rowData.filter(r=>r.condition&&r.condition!=='Fair'&&r.condition!=='Dead'&&!r.condition.includes('Defective')).length;
+  const dead=rowData.filter(r=>r.condition==='Dead'||r.condition.includes('Defective')).length;
+
+  const win=window.open('','_blank');
+  win.document.write(`<!DOCTYPE html>
+<html><head><meta charset="UTF-8">
+<title>Bratt Tree — ${site||'Tree Inventory'}${date?' ('+date+')':''}</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Barlow+Condensed:wght@600;700&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'DM Mono',monospace;font-size:10px;color:#26190E;background:white;}
+
+  /* ── Header ── */
+  header{background:#26190E;display:flex;align-items:center;padding:14px 24px;gap:20px;border-bottom:4px solid #EB4C1B;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  header img{height:64px;width:auto;flex-shrink:0;}
+  .h-divider{width:3px;background:#EB4C1B;align-self:stretch;border-radius:2px;flex-shrink:0;}
+  .htitle{color:#E9E71D;font-family:'Barlow Condensed',sans-serif;font-size:1.8rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;line-height:1;flex-shrink:0;}
+  .hmeta{margin-left:auto;display:grid;grid-template-columns:1fr 1fr;gap:10px 28px;}
+  .mf label{display:block;font-size:7.5px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.55);margin-bottom:2px;}
+  .mf span{display:block;font-size:11px;color:white;border-bottom:1px solid #CC813B;padding-bottom:2px;min-width:110px;}
+  .mf span:empty::after{content:'—';color:rgba(255,255,255,0.3);}
+
+  /* ── Stats bar ── */
+  .stats{background:#f7f2e8;padding:7px 24px;display:flex;gap:24px;font-size:10px;color:#7A4120;border-bottom:1px solid #c8b99a;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .stat{display:flex;align-items:center;gap:6px;}
+  .stat strong{color:#26190E;font-size:12px;}
+  .dot{width:7px;height:7px;border-radius:50%;display:inline-block;}
+
+  /* ── Table ── */
+  .table-wrap{padding:16px 24px 24px;}
+  table{width:100%;border-collapse:collapse;table-layout:fixed;border:1px solid #c8b99a;border-radius:6px;overflow:hidden;}
+  thead{background:#26190E;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  th{color:white;font-size:8px;letter-spacing:0.14em;text-transform:uppercase;padding:9px 10px;text-align:left;font-weight:500;}
+  th:nth-child(1){width:9%;text-align:center;}
+  th:nth-child(2){width:16%;}
+  th:nth-child(3){width:8%;}
+  th:nth-child(4){width:18%;}
+  th:nth-child(5){width:38%;}
+  th:nth-child(6){width:11%;text-align:center;}
+  td{padding:6px 10px;vertical-align:middle;border-bottom:1px solid #e8e0d0;word-break:break-word;font-size:10px;}
+  td:nth-child(1){text-align:center;color:#7A4120;font-weight:600;}
+  td:nth-child(6){text-align:center;font-weight:600;}
+  tbody tr:last-child td{border-bottom:none;}
+  tbody tr:nth-child(even){background:#f7f2e8;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+
+  /* ── Photo section ── */
+  .photo-section{margin-top:0;}
+  .photo-header{background:#26190E;color:#E9E71D;padding:12px 24px;font-family:'Barlow Condensed',sans-serif;font-size:1.3rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;border-bottom:4px solid #EB4C1B;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .photo-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;padding:20px 24px;}
+  .photo-card{border:1px solid #c8b99a;border-radius:6px;overflow:hidden;break-inside:avoid;}
+  .photo-card-label{background:#26190E;color:#E9E71D;font-size:10px;letter-spacing:0.1em;padding:7px 12px;font-family:'Barlow Condensed',sans-serif;font-weight:700;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .photo-card img{width:100%;height:260px;object-fit:cover;display:block;}
+  .photo-card-meta{padding:7px 12px;font-size:9px;color:#7A4120;}
+
+  @page{size:portrait;margin:0.8cm;}
+  @media print{.photo-section{page-break-before:always;}}
+</style>
+</head><body>
+<header>
+  <img src="https://www.bratttree.com/wp-content/uploads/2025/10/badge-logo.svg" alt="Bratt Tree">
+  <div class="h-divider"></div>
+  <div class="htitle">Tree Inventory</div>
+  <div class="hmeta">
+    <div class="mf"><label>Date</label><span>${date}</span></div>
+    <div class="mf"><label>Arborist</label><span>${arborist}</span></div>
+    <div class="mf"><label>Location / Site</label><span>${site}</span></div>
+    <div class="mf"><label>Weather</label><span>${weather}</span></div>
+  </div>
+</header>
+<div class="stats">
+  <div class="stat"><strong>${rowData.length}</strong> Trees</div>
+  <div class="stat"><span class="dot" style="background:#448629;"></span><strong>${fair}</strong> Fair</div>
+  <div class="stat"><span class="dot" style="background:#A35817;"></span><strong>${poor}</strong> Poor / Disease</div>
+  <div class="stat"><span class="dot" style="background:#b84040;"></span><strong>${dead}</strong> Dead / Defective</div>
+</div>
+<div class="table-wrap">
+<table>
+  <thead><tr>
+    <th>#</th><th>Species</th><th>DBH</th><th>Condition</th><th>Notes / Detail</th><th>75' Setback</th>
+  </tr></thead>
+  <tbody>${tableRows}</tbody>
+</table>
+</div>
+${photoCards?`<div class="photo-section">
+  <div class="photo-header">Photo Reference</div>
+  <div class="photo-grid">${photoCards}</div>
+</div>`:''}
+<script>window.onload=function(){window.print();}<\/script>
+</body></html>`);
+  win.document.close();
+}
+
+// ── Auto-save to localStorage ────────────────────────────────
+const SAVE_KEY='brattree_inventory';
+let lastSaved=null;
+let saveTimer=null;
+
+function getSaveData(){
+  const rows=document.querySelectorAll('#tree-body tr');
+  const rowData=[];
+  rows.forEach(tr=>{
+    const rid=tr.dataset.rowId,c=tr.querySelectorAll('td');
+    rowData.push({
+      num:c[0].textContent.trim(),
+      species:c[1].querySelector('input').value,
+      dbh:c[2].querySelector('input').value.replace('"',''),
+      condition:c[3].querySelector('select').value,
+      notes:c[4].querySelector('textarea').value,
+      setback:c[5].querySelector('select').value,
+      photo:photoStore[rid]||null
+    });
+  });
+  return{
+    rows:rowData,
+    date:document.getElementById('inv-date').value,
+    arborist:document.getElementById('inv-arborist').value,
+    site:document.getElementById('inv-site').value,
+    weather:document.getElementById('inv-weather').value,
+    savedAt:new Date().toISOString()
+  };
+}
+
+function saveNow(){
+  try{
+    localStorage.setItem(SAVE_KEY,JSON.stringify(getSaveData()));
+    lastSaved=new Date();
+    updateSaveStatus();
+  }catch(e){
+    // localStorage may be full (photos are large) — fail silently
+    document.getElementById('save-label').textContent='Save failed (storage full)';
+  }
+}
+
+function markUnsaved(){
+  document.getElementById('save-dot').className='save-dot unsaved';
+  document.getElementById('save-label').textContent='Unsaved changes…';
+  clearTimeout(saveTimer);
+  saveTimer=setTimeout(saveNow,3000); // save 3s after last change
+}
+
+function updateSaveStatus(){
+  if(!lastSaved)return;
+  const dot=document.getElementById('save-dot');
+  dot.className='save-dot';
+  const mins=Math.round((new Date()-lastSaved)/60000);
+  document.getElementById('save-label').textContent=mins<1?'Saved just now':`Saved ${mins} min ago`;
+}
+
+// Update "X mins ago" every minute
+setInterval(updateSaveStatus,60000);
+
+// Auto-save every 30 seconds regardless
+setInterval(saveNow,30000);
+
+function restoreFromSave(){
+  try{
+    const raw=localStorage.getItem(SAVE_KEY);
+    if(!raw)return false;
+    const data=JSON.parse(raw);
+    if(!data||!data.rows||data.rows.length===0)return false;
+
+    const savedAt=new Date(data.savedAt);
+    const mins=Math.round((new Date()-savedAt)/60000);
+    const timeStr=mins<1?'less than a minute ago':mins===1?'1 minute ago':`${mins} minutes ago`;
+
+    if(!confirm(`Restore saved session from ${timeStr}?\n\nClick OK to restore, Cancel to start fresh.`))return false;
+
+    // Restore header fields
+    document.getElementById('inv-date').value=data.date||'';
+    document.getElementById('inv-arborist').value=data.arborist||'';
+    document.getElementById('inv-site').value=data.site||'';
+    document.getElementById('inv-weather').value=data.weather||'';
+
+    // Restore rows
+    document.getElementById('tree-body').innerHTML='';
+    rowCounter=0;
+    data.rows.forEach(r=>{
+      const tr=createRow(r);
+      document.getElementById('tree-body').appendChild(tr);
+      if(r.photo){
+        photoStore[tr.dataset.rowId]=r.photo;
+        const td=tr.querySelector('td.photo-cell');
+        renderThumb(td,r.photo,tr.dataset.rowId,r.num);
+      }
+    });
+    updateStats();
+    lastSaved=savedAt;
+    updateSaveStatus();
+    return true;
+  }catch(e){return false;}
+}
+
+// Hook markUnsaved onto all interactive elements
+function attachChangeListeners(){
+  document.getElementById('tree-body').addEventListener('input',markUnsaved);
+  document.getElementById('tree-body').addEventListener('change',markUnsaved);
+  ['inv-date','inv-arborist','inv-site','inv-weather'].forEach(id=>{
+    document.getElementById(id).addEventListener('input',markUnsaved);
+  });
+}
+
+// Init
+const tbody=document.getElementById('tree-body');
+const restored=restoreFromSave();
+if(!restored){
+  existingData.forEach(d=>tbody.appendChild(createRow(d)));
+  updateStats();
+}
+attachChangeListeners();
+saveNow();
+
+// ── ZIP image download using JSZip ──────────────────────────
+function loadScript(src,cb){
+  if(document.querySelector('script[src="'+src+'"]')){cb();return;}
+  const s=document.createElement('script');s.src=src;s.onload=cb;document.head.appendChild(s);
+}
+
+async function downloadImages(){
+  const photos=[];
+  document.querySelectorAll('#tree-body tr').forEach(tr=>{
+    const rid=tr.dataset.rowId,photo=photoStore[rid];if(!photo)return;
+    const c=tr.querySelectorAll('td');
+    const num=String(c[0].textContent.trim()).padStart(3,'0');
+    const species=(c[1].querySelector('input').value||'Unknown').replace(/\s+/g,'_');
+    photos.push({filename:`Tree_${num}_${species}.jpg`,dataUrl:photo});
+  });
+  if(photos.length===0){alert('No photos uploaded yet.');return;}
+
+  loadScript('https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js',async function(){
+    const zip=new JSZip();
+    const rawSite=document.getElementById('inv-site').value.trim().replace(/\s+/g,'_');
+    const rawDate=document.getElementById('inv-date').value.trim().replace(/\//g,'-');
+    const folderName=(rawSite||'BrattTree')+'_Photos'+(rawDate?'_'+rawDate:'');
+    const folder=zip.folder(folderName);
+
+    photos.forEach(p=>{
+      const base64=p.dataUrl.split(',')[1];
+      folder.file(p.filename,base64,{base64:true});
+    });
+
+    const blob=await zip.generateAsync({type:'blob'});
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    a.download=folderName+'.zip';
+    a.click();
+  });
+}
+</script>
+</body>
+</html>
