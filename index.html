@@ -1131,8 +1131,8 @@ saveNow();
 // PUBLISH_TOKEN is replaced at deploy time by .github/workflows/deploy.yml.
 // In source it's the literal placeholder, which publishConfigured() detects.
 const PUBLISH_TOKEN='__BT_PUBLISH_TOKEN__';
-const REPORTS_REPO='BrattTree/treeinventory-reports';
-const REPORTS_PAGES_BASE='https://bratttree.github.io/treeinventory-reports';
+const REPORTS_REPO='BrattTreeService/treeinventory-reports';
+const REPORTS_PAGES_BASE='https://bratttreeservice.github.io/treeinventory-reports';
 const PUB_KEY=SAVE_KEY+'_pub';
 
 function publishConfigured(){
@@ -1163,7 +1163,7 @@ function refreshPublishButton(){
   if(!btn)return;
   if(!publishConfigured()){
     btn.disabled=true;
-    btn.title='Publish is only available on the live (bratttree.github.io) version of this tool.';
+    btn.title='Publish is only available on the live (bratttreeservice.github.io) version of this tool.';
     btn.textContent='↑ Publish';
     return;
   }
@@ -1181,7 +1181,7 @@ function setPublishState(s){
 
 function showPublish(){
   if(!publishConfigured()){
-    alert('Publish is only available on the live version of this tool at bratttree.github.io. A local or downloaded copy can’t publish.');
+    alert('Publish is only available on the live version of this tool at bratttreeservice.github.io. A local or downloaded copy can’t publish.');
     return;
   }
   const prev=getPublishedRecord();
