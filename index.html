@@ -636,6 +636,16 @@ function serializeToHTML(){
       <div class="photo-card-meta">${r.species||'—'} · DBH ${r.dbh?r.dbh+'"':'—'} · ${r.condition||'—'}</div>
     </div>`).join('');
 
+  const slugify=s=>(s||'').toString().toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
+  const siteSlug=slugify(site)||'inventory';
+  const zipName='bratt-tree-photos-'+siteSlug+'.zip';
+  const photoData=rowData.filter(r=>r.photo).map(r=>({
+    filename:'tree-'+String(r.num).padStart(3,'0')+'-'+(slugify(r.species)||'unknown')+'.jpg',
+    dataUrl:r.photo
+  }));
+  const photoDataJSON=JSON.stringify(photoData).replace(/</g,'\\u003c');
+  const zipNameJSON=JSON.stringify(zipName);
+
   const titleLine=site||'Tree Inventory Report';
 
   return`<!DOCTYPE html>
@@ -719,6 +729,17 @@ footer img{height:64px;width:auto;}
 .lb-x{position:absolute;top:20px;right:22px;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.25);color:#fff;font-size:18px;width:42px;height:42px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:sans-serif;}
 .lb-x:hover{background:#EB4C1B;border-color:#EB4C1B;}
 
+/* ── Customer action buttons (PDF + Photos zip) ──────── */
+.report-actions{display:flex;gap:12px;padding:18px 36px 0;flex-wrap:wrap;justify-content:flex-end;}
+.report-actions button{font-family:inherit;font-weight:900;font-size:13px;letter-spacing:0.12em;text-transform:uppercase;padding:12px 22px;border-radius:999px;border:none;cursor:pointer;color:#fff;transition:transform .12s, box-shadow .12s, background .12s;box-shadow:0 3px 8px rgba(26,14,5,.18);}
+.report-actions button:hover{transform:translateY(-1px);box-shadow:0 5px 14px rgba(26,14,5,.25);}
+.report-actions button:active{transform:translateY(0);}
+.report-actions button:disabled{opacity:.6;cursor:wait;transform:none;}
+.action-pdf{background:#EB4C1B;}
+.action-pdf:hover{background:#D43F12;}
+.action-zip{background:#0096AA;}
+.action-zip:hover{background:#007D8C;}
+
 @media (max-width:680px){
   .hero{flex-direction:column;text-align:center;gap:14px;padding:24px 24px 18px;}
   .info-card{grid-template-columns:1fr 1fr;}
@@ -726,9 +747,12 @@ footer img{height:64px;width:auto;}
   .trust{font-size:10px;gap:14px;}
   .tw{padding:12px;}
   footer{flex-direction:column;text-align:center;}
+  .report-actions{padding:14px 16px 0;gap:10px;}
+  .report-actions button{flex:1;padding:13px 12px;font-size:12px;letter-spacing:0.1em;}
 }
 @media print{
   body{background:#fff;}
+  .report-actions{display:none !important;}
   .photo-section{page-break-before:always;}
   .photo-grid{grid-template-columns:repeat(2,1fr);gap:18px;padding:18px 20px;}
   .photo-card img{height:280px;}
@@ -752,6 +776,11 @@ footer img{height:64px;width:auto;}
   <span>ISA-Certified Arborists</span><span class="sep">•</span>
   <span>Licensed & Insured</span><span class="sep">•</span>
   <span>A+ Rated</span>
+</div>
+
+<div class="report-actions">
+  <button class="action-pdf" onclick="downloadPDF()" type="button">↓ Download PDF</button>
+  ${photoData.length?`<button class="action-zip" onclick="downloadAllPhotos(this)" type="button">↓ Download All Photos</button>`:''}
 </div>
 
 <div class="info-wrap">
@@ -800,6 +829,49 @@ ${photoCards?`<div class="photo-section">
 <script>
 function openLb(src,cap){var lb=document.getElementById('lb');document.getElementById('lb-img').src=src;document.getElementById('lb-cap').textContent=cap||'';lb.classList.add('on');}
 document.addEventListener('keydown',function(e){if(e.key==='Escape')document.getElementById('lb').classList.remove('on');});
+
+var PHOTO_DATA=${photoDataJSON};
+var ZIP_NAME=${zipNameJSON};
+
+function downloadPDF(){window.print();}
+
+function downloadAllPhotos(btn){
+  if(!PHOTO_DATA||!PHOTO_DATA.length){alert('No photos in this report.');return;}
+  var orig=btn.textContent;
+  btn.disabled=true;btn.textContent='Preparing zip…';
+  var existing=document.querySelector('script[data-jszip]');
+  function build(){
+    try{
+      var zip=new JSZip();
+      PHOTO_DATA.forEach(function(p){
+        var base64=(p.dataUrl||'').split(',')[1]||'';
+        zip.file(p.filename,base64,{base64:true});
+      });
+      zip.generateAsync({type:'blob'}).then(function(blob){
+        var a=document.createElement('a');
+        a.href=URL.createObjectURL(blob);
+        a.download=ZIP_NAME;
+        document.body.appendChild(a);a.click();document.body.removeChild(a);
+        setTimeout(function(){URL.revokeObjectURL(a.href);},2000);
+        btn.disabled=false;btn.textContent=orig;
+      },function(err){
+        alert('Could not build zip: '+(err&&err.message||err));
+        btn.disabled=false;btn.textContent=orig;
+      });
+    }catch(e){
+      alert('Could not build zip: '+e.message);
+      btn.disabled=false;btn.textContent=orig;
+    }
+  }
+  if(window.JSZip){build();return;}
+  if(existing){existing.addEventListener('load',build);return;}
+  var s=document.createElement('script');
+  s.src='https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js';
+  s.setAttribute('data-jszip','1');
+  s.onload=build;
+  s.onerror=function(){btn.disabled=false;btn.textContent=orig;alert('Could not load zip library — check your internet connection and try again.');};
+  document.head.appendChild(s);
+}
 <\/script>
 </body></html>`;
 }
