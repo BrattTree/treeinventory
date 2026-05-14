@@ -730,10 +730,11 @@ footer img{height:64px;width:auto;}
 .lb-x:hover{background:#EB4C1B;border-color:#EB4C1B;}
 
 /* ── Customer action buttons (PDF + Photos zip) ──────── */
-.report-actions{display:flex;gap:12px;padding:18px 36px 0;flex-wrap:wrap;justify-content:flex-end;}
-.report-actions button{font-family:inherit;font-weight:900;font-size:13px;letter-spacing:0.12em;text-transform:uppercase;padding:12px 22px;border-radius:999px;border:none;cursor:pointer;color:#fff;transition:transform .12s, box-shadow .12s, background .12s;box-shadow:0 3px 8px rgba(26,14,5,.18);}
-.report-actions button:hover{transform:translateY(-1px);box-shadow:0 5px 14px rgba(26,14,5,.25);}
+.report-actions{display:flex;flex-direction:column;gap:10px;flex-shrink:0;align-self:center;}
+.report-actions button{font-family:inherit;font-weight:900;font-size:13px;letter-spacing:0.12em;text-transform:uppercase;padding:12px 22px;border-radius:999px;border:none;cursor:pointer;color:#fff;white-space:nowrap;transition:transform .12s, box-shadow .12s, background .12s;box-shadow:0 3px 10px rgba(0,0,0,.35);}
+.report-actions button:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(0,0,0,.45);}
 .report-actions button:active{transform:translateY(0);}
+.report-actions button:focus-visible{outline:2px solid #E9E71D;outline-offset:3px;}
 .report-actions button:disabled{opacity:.6;cursor:wait;transform:none;}
 .action-pdf{background:#EB4C1B;}
 .action-pdf:hover{background:#D43F12;}
@@ -747,7 +748,7 @@ footer img{height:64px;width:auto;}
   .trust{font-size:10px;gap:14px;}
   .tw{padding:12px;}
   footer{flex-direction:column;text-align:center;}
-  .report-actions{padding:14px 16px 0;gap:10px;}
+  .report-actions{flex-direction:row;width:100%;gap:10px;align-self:stretch;}
   .report-actions button{flex:1;padding:13px 12px;font-size:12px;letter-spacing:0.1em;}
 }
 @media print{
@@ -769,6 +770,10 @@ footer img{height:64px;width:auto;}
     <h1>Tree Inventory Report</h1>
     <div class="hero-sub">${site?site:'Property assessment'}${date?'  ·  '+date:''}</div>
   </div>
+  <div class="report-actions">
+    <button class="action-pdf" onclick="downloadPDF()" type="button">↓ Download PDF</button>
+    ${photoData.length?`<button class="action-zip" onclick="downloadAllPhotos(this)" type="button">↓ Download All Photos</button>`:''}
+  </div>
 </header>
 
 <div class="trust">
@@ -776,11 +781,6 @@ footer img{height:64px;width:auto;}
   <span>ISA-Certified Arborists</span><span class="sep">•</span>
   <span>Licensed & Insured</span><span class="sep">•</span>
   <span>A+ Rated</span>
-</div>
-
-<div class="report-actions">
-  <button class="action-pdf" onclick="downloadPDF()" type="button">↓ Download PDF</button>
-  ${photoData.length?`<button class="action-zip" onclick="downloadAllPhotos(this)" type="button">↓ Download All Photos</button>`:''}
 </div>
 
 <div class="info-wrap">
