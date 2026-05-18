@@ -55,15 +55,14 @@
   ::selection{background:var(--bt-lime);color:var(--bt-ink);}
 
   /* ── Header ─────────────────────────────────────────────── */
-  header{background:var(--bt-bark);display:flex;align-items:stretch;min-height:96px;
-    border-bottom:3px solid var(--bt-orange);}
-  .header-logo{background:var(--bt-bark);padding:10px 24px 10px 28px;display:flex;align-items:center;flex-shrink:0;
-    border-right:3px solid var(--bt-orange);}
-  .header-logo img{height:72px;width:auto;display:block;}
-  .header-title{padding:16px 28px;display:flex;flex-direction:column;justify-content:center;gap:4px;}
-  .header-title .eyebrow{font-family:var(--font-headline);font-weight:800;font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:var(--bt-lime);opacity:0.85;}
+  header{background:var(--bt-bark);display:flex;align-items:center;min-height:88px;
+    border-bottom:3px solid var(--bt-orange);padding:0 28px;gap:22px;}
+  .header-logo{display:flex;align-items:center;flex-shrink:0;}
+  .header-logo img{height:64px;width:auto;display:block;}
+  .header-divider{width:2px;align-self:stretch;background:var(--bt-orange);margin:18px 0;flex-shrink:0;}
+  .header-title{display:flex;align-items:center;}
   .header-title h1{font-family:var(--font-headline);font-weight:900;font-size:1.9rem;letter-spacing:0.04em;color:#fff;line-height:1;text-transform:uppercase;}
-  .header-meta{display:flex;gap:18px;flex-wrap:wrap;margin-left:auto;padding:14px 28px 14px 0;align-items:center;}
+  .header-meta{display:flex;gap:18px;flex-wrap:wrap;margin-left:auto;align-items:center;}
   .meta-field{display:flex;flex-direction:column;gap:4px;}
   .meta-field label{font-family:var(--font-body);font-weight:700;font-size:10px;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.65);}
   .meta-field input{background:rgba(255,255,255,0.06);border:1.5px solid rgba(255,255,255,0.18);color:#fff;font-family:var(--font-body);font-weight:600;font-size:13px;padding:6px 10px;width:140px;outline:none;border-radius:8px;transition:border-color var(--t-fast),background var(--t-fast),box-shadow var(--t-fast);}
@@ -276,8 +275,8 @@
   <div class="header-logo">
     <img src="https://www.bratttree.com/wp-content/uploads/2025/10/badge-logo.svg" alt="Bratt Tree Logo">
   </div>
+  <div class="header-divider" aria-hidden="true"></div>
   <div class="header-title">
-    <span class="eyebrow">Bratt Tree Company</span>
     <h1>Tree Inventory</h1>
   </div>
   <div class="header-meta">
